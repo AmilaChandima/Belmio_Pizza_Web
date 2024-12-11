@@ -13,7 +13,7 @@ function App() {
       <div className="pt-1">
         <Hero/>
         <StorySection />
-        <Services />
+        <Services/>
         <Footer />
       </div>
     </>
