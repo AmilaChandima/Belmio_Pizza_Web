@@ -135,7 +135,7 @@ const ReviewPage = () => {
             ))}
           </div>
         ) : (
-          <div className="px-4">
+          <div className="px-4 ">
             <Slider {...sliderSettings}>
               {reviews.map((review, index) => (
                 <motion.div
