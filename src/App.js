@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -14,12 +15,11 @@ import AboutUs from "./components/Pages/AboutUs";
 import LoginPopUp from "./components/LoginPopUp/LoginPopUp";
 import { StoreContext } from "./context/StoreContext";
 import ScrollToTop from "./components/ScrollTop";
+import ReviewPage from "./components/Pages/Review"; // Add this import
 import TableReservation from "./components/Pages/TableReservation";
 
-
 function App() {
-
-  const {showLogin, setShowLogin, formType, setFormType} = useContext(StoreContext);
+  const { showLogin, setShowLogin, formType, setFormType } = useContext(StoreContext);
 
   useEffect(() => {
     if (showLogin) {
@@ -30,12 +30,19 @@ function App() {
       document.body.style.position = "initial";
     }
   }, [showLogin]);
-  
 
   return (
     <Router>
-      <ScrollToTop/>
-      {showLogin ? <LoginPopUp setShowLogin={setShowLogin} formType={formType} setFormType = {setFormType} /> : <></>}
+      <ScrollToTop />
+      {showLogin ? (
+        <LoginPopUp 
+          setShowLogin={setShowLogin} 
+          formType={formType} 
+          setFormType={setFormType} 
+        />
+      ) : (
+        <></>
+      )}
       <NavBar setShowLogin={setShowLogin} setFormType={setFormType} />
 
       <Routes>
@@ -46,18 +53,18 @@ function App() {
               <Hero />
               <StorySection />
               <Services />
+              <ReviewPage />
             </>
           }
         />
-        <Route path="/menu" element={<MenuPage/>} />
-        <Route path="/services" element={<Ser/>} />
-        <Route path="/aboutUs" element={<AboutUs/>} />
+        <Route path="/menu" element={<MenuPage />} />
+        <Route path="/services" element={<Ser />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
+        <Route path="/reviews" element={<ReviewPage />} /> {/* Add this route */}
         <Route path="/services/table" element={<TableReservation />} />
-
         <Route path="*" element={<div>Page Not Found</div>} />
-
       </Routes>
 
       <Footer />
