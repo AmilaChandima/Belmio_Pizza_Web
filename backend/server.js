@@ -3,7 +3,8 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import 'dotenv/config'
-
+import reservationRouter from "./routes/reservationRoute.js";
+import foodTruckRouter from "./routes/foodTruckReservationRoute.js";
 
 
 
@@ -38,4 +39,16 @@ app.listen(port, () => {
 // mongodb+srv://kavindusarathchandraaa:<db_password>@cluster0.531tr.mongodb.net/?
 
 
+// add the new reservation
 
+
+
+
+
+
+app.use("/api/reservations", reservationRouter);
+
+
+// food truck reservation
+
+app.use("/api/foodtruck-reservations", foodTruckRouter);
