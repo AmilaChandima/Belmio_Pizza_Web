@@ -108,7 +108,7 @@ const ReviewPage = () => {
     <section className="py-16 bg-[#f1f0ea]">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl sm:text-4xl font-bold text-orange-600 mb-6 text-center">
-          Customer Reviews
+         <span className = "text-black"> CUSTOMER </span> REVIEWS
         </h2>
 
         {reviews.length <= 3 ? (
