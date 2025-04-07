@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { menuServices } from "../../Services/MenuServices";
 
 const CLOUDINARY_CLOUD_NAME = "dnhvrcls9";
 const UPLOAD_PRESET = "KickOff";
@@ -86,13 +87,25 @@ const AddItem = () => {
     };
 
     try {
+      const response = await menuServices.addItem(newItem);
+      if (response) {
+        toast.success("Menu Item Created Successfully!");
+        setTimeout(() => navigate("/menu"), 2000);
+        setFormData({
+          name: "",
+          category: "Pizza",
+          description: "",
+          prices: {
+            medium: "",
+            large: "",
+          },
+        });
+        setImage(null);
 
-      await axios.post("http://localhost:4000/api/menu/add", newItem);
-      toast.success("Item added successfully!");
-      navigate("/menu");
-    } catch (err) {
-      toast.error("Failed to add item.");
-      console.error(err);
+      }
+    } catch (error) {
+      console.error("Menu Item creation failed:", error);
+      toast.error("Failed to Create Menu Item. Please Try Again.");
     } finally {
       setLoading(false);
     }
@@ -103,8 +116,8 @@ const AddItem = () => {
 
       <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">
 
-          <span className="text-black">ADD MENU <span className="text-orange-500">ITEM</span></span>
-        </h2>
+        <span className="text-black">ADD MENU <span className="text-orange-500">ITEM</span></span>
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
 

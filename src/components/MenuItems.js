@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios"; 
+import { menuServices } from '../Services/MenuServices';
+
 
 const MenuItem = ({ item, onAddToCart, onDelete }) => {
   const [hovered, setHovered] = useState(false);
@@ -18,7 +19,7 @@ const MenuItem = ({ item, onAddToCart, onDelete }) => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:4000/api/menu/delete/${item._id}`);
+      await menuServices.deleteItem();
       toast.success("Menu Item Deleted Successfully!");
       if (onDelete) onDelete(item._id);
     } catch (error) {

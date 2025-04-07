@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import MenuItem from '../MenuItems';
+import { menuServices } from '../../Services/MenuServices';
 
 import heroImage from "../../assests/hero-image.png";
 
@@ -14,8 +15,8 @@ const MenuPage = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/menu/all');
-        setMenuData(res.data); // Assuming your API returns an array of menu items
+        const data = await menuServices.getAllItems();
+        setMenuData(data); // Assuming your API returns an array of menu items
       } catch (error) {
         console.error("Failed to fetch menu items", error);
       } finally {

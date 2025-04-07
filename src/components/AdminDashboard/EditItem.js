@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { menuServices } from "../../Services/MenuServices";
 
 const CLOUDINARY_CLOUD_NAME = "dnhvrcls9";
 const UPLOAD_PRESET = "KickOff";
@@ -27,8 +28,7 @@ const EditItem = () => {
     const fetchItemData = async () => {
       try {
         setLoading(true)
-        const response = await axios.get(`http://localhost:4000/api/menu/${id}`);
-        const item = response.data;
+        const item = await menuServices.getItemById(id);
         if (item) {
           setFormData({
             name: item.name,
@@ -123,7 +123,7 @@ const EditItem = () => {
     };
 
     try {
-      await axios.put(`http://localhost:4000/api/menu/edit/${id}`, updatedItem);
+      await menuServices.updateItem(id, updatedItem);
       toast.success("Item updated successfully!");
       navigate("/menu");
     } catch (err) {
