@@ -47,7 +47,7 @@ const Services = () => {
         </Link>
         
         {/* Service: Reservation */}
-        
+        <Link to="/services/table">
         <button 
           className="relative w-full h-[360px] border border-gray-300 rounded-md cursor-pointer hover:scale-105 transition-all duration-300"
         >
@@ -56,7 +56,7 @@ const Services = () => {
             RESERVATION
           </div>
         </button>
-        
+        </Link>
         {/* Service: Food Truck */}
         <Link to="/services/foodTruck">
         <button 
