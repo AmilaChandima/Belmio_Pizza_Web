@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
 import MenuItem from '../MenuItems';
 import { menuServices } from '../../Services/MenuServices';
-
 import heroImage from "../../assests/hero-image.png";
-
 
 const MenuPage = () => {
   const [menuData, setMenuData] = useState([]);
@@ -15,7 +12,7 @@ const MenuPage = () => {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const data = await menuServices.getAllItems();
+        const data = await menuServices.getAllItems(); // Fetching from API
         setMenuData(data); // Assuming your API returns an array of menu items
       } catch (error) {
         console.error("Failed to fetch menu items", error);
@@ -31,7 +28,6 @@ const MenuPage = () => {
     setMenuData(prevData => prevData.filter(item => item._id !== id));
   };
 
-
   const handleAddToCart = (item, size) => {
     const newItem = { ...item, selectedSize: size, price: item.prices[size] };
     setCart(prevCart => [...prevCart, newItem]); // Update cart safely
@@ -42,7 +38,6 @@ const MenuPage = () => {
     selectedCategory === 'All'
       ? menuData
       : menuData.filter(item => item.category.toLowerCase() === selectedCategory.toLowerCase());
-
 
   return (
     <div className="menu-page">
@@ -55,7 +50,6 @@ const MenuPage = () => {
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
         {/* Content */}
         <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
-
           <h1 className="text-4xl text-white font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-24">
             OUR
             <span className="text-orange-500"> MENU</span>
@@ -67,12 +61,8 @@ const MenuPage = () => {
             HOME/MENU
           </p>
           <div className="absolute bottom-0 left-[-100px] w-[400px] h-2 bg-orange-500"></div>
-
-
         </div>
       </section>
-
-
 
       {/* Category Navigation */}
       <div className="menu-header flex flex-col md:flex-row items-start md:items-center justify-between px-4 md:px-16 mt-24 ">
@@ -100,9 +90,7 @@ const MenuPage = () => {
         </div>
       </div>
 
-
       {/* Menu Items */}
-
       <div className="menu-items grid sm:grid-cols-2 grid-cols-3 lg:grid-cols-4 mx-20 mb-20 justify-evenly mt-24">
         {loading ? (
           <p className="text-center col-span-full text-gray-500">Loading menu...</p>

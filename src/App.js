@@ -15,19 +15,16 @@ import AboutUs from "./components/Pages/AboutUs";
 import LoginPopUp from "./components/LoginPopUp/LoginPopUp";
 import { StoreContext } from "./context/StoreContext";
 import ScrollToTop from "./components/ScrollTop";
-import AddItem from "./components/AdminDashboard/AddItem";
-import EditItem from "./components/AdminDashboard/EditItem";
-
+import ReviewPage from "./components/Pages/Review"; // Added import for ReviewPage
+import TableReservation from "./components/Pages/TableReservation"; // Added import for TableReservation
+import AddItem from "./components/AdminDashboard/AddItem"; // Keep your Admin routes as is
+import EditItem from "./components/AdminDashboard/EditItem"; // Keep your Admin routes as is
 
 function App() {
-
   const { showLogin, setShowLogin, formType, setFormType } = useContext(StoreContext);
 
   useEffect(() => {
     if (showLogin) {
-
-      //comment
-      //New comment
       document.body.classList.add("overflow-hidden");
       document.body.style.position = "fixed";
     } else {
@@ -36,12 +33,19 @@ function App() {
     }
   }, [showLogin]);
 
-
   return (
     <Router>
       <ToastContainer position="top-right" autoClose={3000} />
       <ScrollToTop />
-      {showLogin ? <LoginPopUp setShowLogin={setShowLogin} formType={formType} setFormType={setFormType} /> : <></>}
+      {showLogin ? (
+        <LoginPopUp 
+          setShowLogin={setShowLogin} 
+          formType={formType} 
+          setFormType={setFormType} 
+        />
+      ) : (
+        <></>
+      )}
       <NavBar setShowLogin={setShowLogin} setFormType={setFormType} />
 
       <Routes>
@@ -52,6 +56,7 @@ function App() {
               <Hero />
               <StorySection />
               <Services />
+              <ReviewPage />
             </>
           }
         />
@@ -60,11 +65,10 @@ function App() {
         <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
-        <Route path="/edit/:id" element={<EditItem />} />
-
-
+        <Route path="/edit/:id" element={<EditItem />} /> {/* Admin edit route */}
+        <Route path="/reviews" element={<ReviewPage />} /> {/* ReviewPage route */}
+        <Route path="/services/table" element={<TableReservation />} /> {/* Table Reservation route */}
         <Route path="*" element={<div>Page Not Found</div>} />
-
       </Routes>
 
       <Footer />
