@@ -16,6 +16,7 @@ import LoginPopUp from "./components/LoginPopUp/LoginPopUp";
 import { StoreContext } from "./context/StoreContext";
 import ScrollToTop from "./components/ScrollTop";
 import ReviewPage from "./components/Pages/Review"; // Add this import
+import TableReservation from "./components/Pages/TableReservation";
 
 function App() {
   const { showLogin, setShowLogin, formType, setFormType } = useContext(StoreContext);
@@ -52,7 +53,7 @@ function App() {
               <Hero />
               <StorySection />
               <Services />
-              <ReviewPage/>
+              <ReviewPage />
             </>
           }
         />
@@ -62,7 +63,8 @@ function App() {
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
         <Route path="/reviews" element={<ReviewPage />} /> {/* Add this route */}
-   
+        <Route path="/services/table" element={<TableReservation />} />
+        <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
 
       <Footer />
