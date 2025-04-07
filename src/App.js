@@ -56,7 +56,7 @@ function App() {
           }
         />
         <Route path="/menu" element={<MenuPage />} />
-        <Route path="/services" element={<AddItem />} />
+        <Route path="/services" element={<Ser />} />
         <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
