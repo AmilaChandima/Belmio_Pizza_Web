@@ -7,7 +7,6 @@ import Pizza2 from "../../assests/Pizza2.png";
 import Pizza3 from "../../assests/Pizza3.png";
 import Pizza4 from "../../assests/Pizza4.png";
 
-
 // Simulated menu data with images
 const menuData = [
   {
@@ -115,7 +114,6 @@ const MenuPage = () => {
           )}
         </div>
       </div>
-
 
       {/* Menu Items */}
       <div className="menu-items grid sm:grid-cols-2 grid-cols-3 lg:grid-cols-4  mx-20  mb-20 justify-evenly mt-24">

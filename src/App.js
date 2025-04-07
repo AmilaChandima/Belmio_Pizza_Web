@@ -14,6 +14,7 @@ import AboutUs from "./components/Pages/AboutUs";
 import LoginPopUp from "./components/LoginPopUp/LoginPopUp";
 import { StoreContext } from "./context/StoreContext";
 import ScrollToTop from "./components/ScrollTop";
+import TableReservation from "./components/Pages/TableReservation";
 
 
 function App() {
@@ -53,7 +54,7 @@ function App() {
         <Route path="/aboutUs" element={<AboutUs/>} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
-
+        <Route path="/services/table" element={<TableReservation />} />
 
         <Route path="*" element={<div>Page Not Found</div>} />
 
