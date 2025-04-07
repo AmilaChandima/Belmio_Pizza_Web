@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import FloorPlanImage from "../../assests/FD.png";
+import FloorPlanImage from "../../assests/floor.png";
 import Table from "../../assests/Table.png";
 
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
