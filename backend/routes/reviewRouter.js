@@ -1,9 +1,9 @@
 import express from "express";
 import { createReview, getReviews } from "../controllers/reviewController.js";
 
-const reviewRouter = express.Router();
+const router = express.Router();
 
-reviewRouter.post("/reviews", createReview);
-reviewRouter.get("/reviews", getReviews);
+router.post("/", createReview); // Handles POST /api/reviews
+router.get("/", getReviews);    // Handles GET /api/reviews
 
-export default reviewRouter;
+export default router;

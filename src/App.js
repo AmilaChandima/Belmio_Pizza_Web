@@ -62,7 +62,7 @@ function App() {
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
         <Route path="/reviews" element={<ReviewPage />} /> {/* Add this route */}
-        <Route path="*" element={<div>Page Not Found</div>} />
+   
       </Routes>
 
       <Footer />
