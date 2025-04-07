@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
+import menuRoutes from "./routes/menuRoutes.js"
 import 'dotenv/config'
 
 
@@ -23,6 +24,7 @@ app.use(cors());
 
 connectDB();
 app.use("/api/user",userRouter);
+app.use("/api/menu", menuRoutes);
 
 app.get("/", (req,res, next) => {
   res.send("API Working");

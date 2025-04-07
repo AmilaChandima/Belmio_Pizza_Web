@@ -1,53 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import MenuItem from '../MenuItems';
 
 import heroImage from "../../assests/hero-image.png";
-import Pizza1 from "../../assests/Pizza1.png";
-import Pizza2 from "../../assests/Pizza2.png";
-import Pizza3 from "../../assests/Pizza3.png";
-import Pizza4 from "../../assests/Pizza4.png";
 
-
-// Simulated menu data with images
-const menuData = [
-  {
-    id: 1,
-    category: 'Pizza',
-    name: 'Pizza Margherita',
-    description: 'Classic pizza with tomato and mozzarella',
-    prices: { medium: 12, large: 16 },
-    image: Pizza1,
-  },
-  {
-    id: 2,
-    category: 'Pizza',
-    name: 'Pepperoni Pizza',
-    description: 'Pizza with pepperoni and mozzarella',
-    prices: { medium: 14, large: 18 },
-    image: Pizza2,
-  },
-  {
-    id: 3,
-    category: 'Sides',
-    name: 'Onion Rings',
-    description: 'Crispy Onion Rings',
-    prices: { medium: 5, large: 7 },
-    image: Pizza3,
-  },
-  {
-    id: 4,
-    category: 'Sides',
-    name: 'Garlic Bread',
-    description: 'Crispy garlic bread',
-    prices: { medium: 5, large: 7 },
-    image: Pizza4,
-  },
-  // Add more items as needed
-];
 
 const MenuPage = () => {
+  const [menuData, setMenuData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [cart, setCart] = useState([]); // Initialize cart as an empty array
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/api/menu/all');
+        setMenuData(res.data); // Assuming your API returns an array of menu items
+      } catch (error) {
+        console.error("Failed to fetch menu items", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenu();
+  }, []);
+
+  const handleDelete = (id) => {
+    setMenuData(prevData => prevData.filter(item => item._id !== id));
+  };
+
 
   const handleAddToCart = (item, size) => {
     const newItem = { ...item, selectedSize: size, price: item.prices[size] };
@@ -58,7 +40,8 @@ const MenuPage = () => {
   const filteredMenu =
     selectedCategory === 'All'
       ? menuData
-      : menuData.filter(item => item.category === selectedCategory);
+      : menuData.filter(item => item.category.toLowerCase() === selectedCategory.toLowerCase());
+
 
   return (
     <div className="menu-page">
@@ -87,7 +70,7 @@ const MenuPage = () => {
 
         </div>
       </section>
-      
+
 
 
       {/* Category Navigation */}
@@ -104,8 +87,8 @@ const MenuPage = () => {
               <button
                 key={category}
                 className={`px-4 py-2 rounded ${selectedCategory === category
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-200 text-black'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-200 text-black'
                   }`}
                 onClick={() => setSelectedCategory(category)}
               >
@@ -118,10 +101,17 @@ const MenuPage = () => {
 
 
       {/* Menu Items */}
-      <div className="menu-items grid sm:grid-cols-2 grid-cols-3 lg:grid-cols-4  mx-20  mb-20 justify-evenly mt-24">
-        {filteredMenu.map(item => (
-          <MenuItem key={item.id} item={item} onAddToCart={handleAddToCart} />
-        ))}
+
+      <div className="menu-items grid sm:grid-cols-2 grid-cols-3 lg:grid-cols-4 mx-20 mb-20 justify-evenly mt-24">
+        {loading ? (
+          <p className="text-center col-span-full text-gray-500">Loading menu...</p>
+        ) : filteredMenu.length > 0 ? (
+          filteredMenu.map(item => (
+            <MenuItem key={item._id || item.id} item={item} onAddToCart={handleAddToCart} onDelete={handleDelete}/>
+          ))
+        ) : (
+          <p className="text-center col-span-full text-gray-500">No items found for this category.</p>
+        )}
       </div>
     </div>
   );

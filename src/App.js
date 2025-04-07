@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import NavBar from "./components/NavBar";
 import StorySection from "./components/StorySection";
 import Services from "./components/Services";
@@ -14,11 +15,13 @@ import AboutUs from "./components/Pages/AboutUs";
 import LoginPopUp from "./components/LoginPopUp/LoginPopUp";
 import { StoreContext } from "./context/StoreContext";
 import ScrollToTop from "./components/ScrollTop";
+import AddItem from "./components/AdminDashboard/AddItem";
+import EditItem from "./components/AdminDashboard/EditItem";
 
 
 function App() {
 
-  const {showLogin, setShowLogin, formType, setFormType} = useContext(StoreContext);
+  const { showLogin, setShowLogin, formType, setFormType } = useContext(StoreContext);
 
   useEffect(() => {
     if (showLogin) {
@@ -32,12 +35,13 @@ function App() {
       document.body.style.position = "initial";
     }
   }, [showLogin]);
-  
+
 
   return (
     <Router>
-      <ScrollToTop/>
-      {showLogin ? <LoginPopUp setShowLogin={setShowLogin} formType={formType} setFormType = {setFormType} /> : <></>}
+      <ToastContainer position="top-right" autoClose={3000} />
+      <ScrollToTop />
+      {showLogin ? <LoginPopUp setShowLogin={setShowLogin} formType={formType} setFormType={setFormType} /> : <></>}
       <NavBar setShowLogin={setShowLogin} setFormType={setFormType} />
 
       <Routes>
@@ -51,11 +55,12 @@ function App() {
             </>
           }
         />
-        <Route path="/menu" element={<MenuPage/>} />
-        <Route path="/services" element={<Ser/>} />
-        <Route path="/aboutUs" element={<AboutUs/>} />
+        <Route path="/menu" element={<MenuPage />} />
+        <Route path="/services" element={<AddItem />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
+        <Route path="/edit/:id" element={<EditItem />} />
 
 
         <Route path="*" element={<div>Page Not Found</div>} />
