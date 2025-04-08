@@ -19,7 +19,7 @@ const MenuItem = ({ item, onAddToCart, onDelete }) => {
     if (!confirmDelete) return;
 
     try {
-      await menuServices.deleteItem();
+      await menuServices.deleteItem(item._id);
       toast.success("Menu Item Deleted Successfully!");
       if (onDelete) onDelete(item._id);
     } catch (error) {
