@@ -1,48 +1,55 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import FloorPlanImage from "../../assests/FD.png";
-import Table from "../../assests/Table.png";
-import reservationServices from '../../Services/reservationServices.js';
-import { toast } from 'react-toastify';
+import Truck from "../../assests/FT.png";
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useNavigate } from 'react-router-dom';
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
+
+const generateTimeSlots = () => {
+  const slots = [];
+  let hour = 12;
+  let minutes = 0;
+  while (hour < 23 || (hour === 22 && minutes === 0)) {
+    const h = hour < 10 ? `0${hour}` : hour;
+    const m = minutes === 0 ? "00" : minutes;
+    slots.push(`${h}:${m}`);
+    minutes += 30;
+    if (minutes === 60) {
+      minutes = 0;
+      hour++;
+    }
+  }
+  return slots;
+};
+
+const timeSlots = generateTimeSlots();
 
 const TableReservation = () => {
   const [reservation, setReservation] = useState({
     tables: [],
     date: '',
-    time: '',
+    inTime: '',
+    outTime: '',
     name: '',
     contact: '',
     headCount: '',
   });
 
   const [reservedTables, setReservedTables] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchReservedTables = async () => {
-      try {
-        setLoading(true);
-        if (reservation.date && reservation.time) {
-          const tables = await reservationServices.getReservedTables(reservation.date, reservation.time);
-          setReservedTables(tables);
-        }
-      } catch (error) {
-        console.error("Failed to fetch reserved tables", error);
-      }
-      finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReservedTables();
-  }, [reservation.date, reservation.time]);
-
+    const { date, inTime, outTime } = reservation;
+    if (date && inTime && outTime) {
+      axios
+        .get('http://localhost:4000/api/reservations', {
+          params: { date, inTime, outTime }
+        })
+        .then(res => setReservedTables(res.data.reservedTables || []))
+        .catch(err => console.error('Failed to fetch reserved tables', err));
+    }
+  }, [reservation.date, reservation.inTime, reservation.outTime]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,78 +58,68 @@ const TableReservation = () => {
 
   const toggleTableSelection = (tableNumber) => {
     const isSelected = reservation.tables.includes(tableNumber);
-    const newTables = isSelected
+    const updatedTables = isSelected
       ? reservation.tables.filter((t) => t !== tableNumber)
       : [...reservation.tables, tableNumber];
-
-    setReservation({ ...reservation, tables: newTables });
+    setReservation({ ...reservation, tables: updatedTables });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     if (reservation.tables.length === 0) {
       toast.error('Please select at least one table.');
       return;
     }
 
+    // Remove reserved tables from selected tables
+    const availableTables = reservation.tables.filter(
+      (table) => !reservedTables.includes(table)
+    );
 
-    const alreadyReserved = reservation.tables.some(table => reservedTables.includes(table));
-    if (alreadyReserved) {
-      toast.error('One or more of the selected tables are already reserved.');
-      const availableTables = reservation.tables.filter(table => !reservedTables.includes(table));
-      setReservation({ ...reservation, tables: availableTables });
-      setLoading(false);
+    if (availableTables.length === 0) {
+      toast.error('No available tables selected.');
       return;
     }
 
+    // Update the reservation object with the available tables
+    const updatedReservation = { ...reservation, tables: availableTables };
+
     try {
-      const res = await reservationServices.createReservation(reservation);
+      const res = await axios.post('http://localhost:4000/api/reservations', updatedReservation);
 
-      if (res.message) {
-
-        toast.success('Reservation successful!');
-        setTimeout(() => {
-          navigate(0);
-        }, 2000);
+      if (res.status === 201) {
+        toast.success('Table(s) successfully reserved!');
         setReservation({
           tables: [],
           date: '',
-          time: '',
+          inTime: '',
+          outTime: '',
           name: '',
           contact: '',
           headCount: '',
         });
-
+        setReservedTables([]);
       } else {
-
-        toast.error('Reservation Failed.Please Try Again');
+        toast.error('Error making reservation.');
       }
     } catch (err) {
       console.error(err);
-
       toast.error('Network error. Try again later.');
     }
-    finally {
-      setLoading(false);
-    }
   };
+
+  // Get today's date in yyyy-mm-dd format
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <>
       {/* Hero Section */}
       <section
         className="relative bg-cover bg-center h-[75vh] flex items-center mt-[84px]"
-        style={{
-          backgroundImage: `url(${Table})`,
-        }}
+        style={{ backgroundImage: `url(${Truck})` }}
       >
-        {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
-
-        {/* Content */}
         <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
           <h1 className="text-4xl text-white font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-24">
             TABLE <span className="text-orange-500">RESERVATION</span>
@@ -139,43 +136,44 @@ const TableReservation = () => {
         <img
           src={FloorPlanImage}
           alt="Floor Plan"
-          className="w-full h-auto border-4 border-gray-200 rounded-lg shadow-lg"
+          className="w-full h-auto border-4 border-orange-500 rounded-lg shadow-lg"
         />
       </div>
 
       {/* Reservation Form Section */}
-      <div className="bg-grayscale py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto font-passion font-extrabold">
+      <div className="bg-gray-50 py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto font-passion font-extrabold">
         <h2 className="text-4xl text-gray-800">
           <span className="text-gray-600">TABLE </span>
           <span className="text-black">RESERVATION</span>
         </h2>
 
-        {/* Table Selection Grid */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          {tableNumbers.map((num) => {
-            const isReserved = reservedTables.includes(num);
-            const isSelected = reservation.tables.includes(num);
-
-            return (
-              <button
-                key={num}
-                type="button"
-                disabled={isReserved}
-                onClick={() => toggleTableSelection(num)}
-                className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
-                  ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                  : isSelected
-                    ? 'bg-orange-500 text-white border-orange-700'
-                    : 'bg-gray-100 hover:bg-gray-200'}`}
-              >
-                {num}
-              </button>
-            );
-          })}
-        </div>
-
-
         <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
+          {/* Table Selection Grid */}
+          <div className="grid grid-cols-4 gap-4 mb-8">
+            {tableNumbers.map((num) => {
+              const isReserved = reservedTables.includes(num);
+              const isSelected = reservation.tables.includes(num);
+
+              return (
+                <button
+                  key={num}
+                  type="button"
+                  disabled={isReserved}
+                  onClick={() => toggleTableSelection(num)}
+                  className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
+                      ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                      : isSelected
+                        ? 'bg-orange-500 text-white border-orange-700'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                >
+                  {num}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Reservation Details */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 font-medium">Date</label>
@@ -186,23 +184,42 @@ const TableReservation = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
                 required
+                min={today} // Set the minimum date to today
               />
             </div>
+
             <div>
-              <label className="block mb-1 font-medium">Time</label>
-              <label className="block mb-1 font-medium">Time</label>
-              <input
-                type="time"
-                name="time"
-                value={reservation.time}
+              <label className="block mb-1 font-medium">In Time</label>
+              <select
+                name="inTime"
+                value={reservation.inTime}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
-                min="09:00" // 1:00 PM
-                max="23:00" // 3:00 PM
-                step="3600" // Optional: restricts to hourly increments (1 hour = 3600 seconds)
                 required
-              />
- 
+              >
+                <option value="">Select</option>
+                {timeSlots.map((slot) => (
+                  <option key={slot} value={slot}>{slot}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">Out Time</label>
+              <select
+                name="outTime"
+                value={reservation.outTime}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+              >
+                <option value="">Select</option>
+                {timeSlots
+                  .filter(slot => slot > reservation.inTime)
+                  .map((slot) => (
+                    <option key={slot} value={slot}>{slot}</option>
+                  ))}
+              </select>
             </div>
           </div>
 
@@ -214,8 +231,8 @@ const TableReservation = () => {
               value={reservation.name}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="Customer Name"
               required
+              placeholder="Customer Name"
             />
           </div>
 
@@ -227,8 +244,8 @@ const TableReservation = () => {
               value={reservation.contact}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="e.g., 123-456-7890"
               required
+              placeholder="0779126119"
             />
           </div>
 
@@ -240,26 +257,23 @@ const TableReservation = () => {
               value={reservation.headCount}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="Number of people"
-              required
               min="1"
+              required
+              placeholder="Number of people"
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
             className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-700 transition"
           >
-            {loading ? (
-              <span className="animate-spin inline-block w-5 h-5 border-[3px] border-white border-t-transparent rounded-full"></span>
-            ) : (
-              `Book Table${reservation.tables.length > 1 ? 's' : ''}`
-            )}
+            Book Table{reservation.tables.length > 1 ? 's' : ''}
           </button>
-
         </form>
       </div>
+
+      {/* ToastContainer to display messages */}
+      <ToastContainer />
     </>
   );
 };

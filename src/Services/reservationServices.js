@@ -1,15 +1,12 @@
-// services/reservationService.js
-
 import axios from 'axios';
-
 
 const apiUrl = "http://localhost:4000/api/reservations"; // Base URL for the API
 
-// Get reserved tables for a given date and time
-const getReservedTables = async (date, time) => {
+// Get reserved tables for a given date and time slot range
+const getReservedTables = async (date, inSlot, outSlot) => {
   try {
     const response = await axios.get(`${apiUrl}/getTable`, {
-      params: { date, time },
+      params: { date, inSlot, outSlot },
     });
     return response.data.reservedTables || [];
   } catch (error) {

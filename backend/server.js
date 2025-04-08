@@ -4,7 +4,7 @@ import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import menuRoutes from "./routes/menuRoutes.js"; // Correctly included menuRoutes import
 import reviewRouter from "./routes/reviewRouter.js";
-import reservationRouter from "./routes/reservationRoutes.js";
+import reservationRouter from "./routes/reservationRoute.js";
 import foodTruckRouter from "./routes/foodTruckReservationRoute.js";
 
 import "dotenv/config";
@@ -22,7 +22,8 @@ connectDB();
 app.use("/api/user", userRouter);
 app.use("/api/menu", menuRoutes); // Correctly set up menu routes
 app.use("/api/reviews", reviewRouter); // Correct path for reviews
-app.use("/api/reservations", reservationRouter); // Add the new reservation route
+//app.use("/api/reservations", reservationRouter); // Add the new reservation route
+app.use("/api/reservations", reservationRouter);
 app.use("/api/foodtruck-reservations", foodTruckRouter); // Food truck reservation route
 
 app.get("/", (req, res) => {
