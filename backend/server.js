@@ -4,8 +4,9 @@ import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import menuRoutes from "./routes/menuRoutes.js"; // Correctly included menuRoutes import
 import reviewRouter from "./routes/reviewRouter.js";
-import reservationRouter from "./routes/reservationRoute.js";
+import reservationRouter from "./routes/reservationRoutes.js";
 import foodTruckRouter from "./routes/foodTruckReservationRoute.js";
+
 import "dotenv/config";
 
 // App config

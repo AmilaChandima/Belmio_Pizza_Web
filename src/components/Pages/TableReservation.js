@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import FloorPlanImage from "../../assests/FD.png";
 import Table from "../../assests/Table.png";
+import reservationServices from '../../Services/reservationServices.js';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+import { useNavigate } from 'react-router-dom';
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
 
 const TableReservation = () => {
@@ -15,21 +19,30 @@ const TableReservation = () => {
   });
 
   const [reservedTables, setReservedTables] = useState([]);
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Fetch already reserved tables
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (reservation.date && reservation.time) {
-      fetch(`/api/reservations?date=${reservation.date}&time=${reservation.time}`)
-        .then(res => res.json())
-        .then(data => {
-          setReservedTables(data.reservedTables || []);
-        })
-        .catch(err => {
-          console.error('Failed to fetch reserved tables', err);
-        });
-    }
+    const fetchReservedTables = async () => {
+      try {
+        setLoading(true);
+        if (reservation.date && reservation.time) {
+          const tables = await reservationServices.getReservedTables(reservation.date, reservation.time);
+          setReservedTables(tables);
+        }
+      } catch (error) {
+        console.error("Failed to fetch reserved tables", error);
+      }
+      finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReservedTables();
   }, [reservation.date, reservation.time]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,23 +58,35 @@ const TableReservation = () => {
     setReservation({ ...reservation, tables: newTables });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (reservation.tables.length === 0) {
-      setMessage('Please select at least one table.');
+      toast.error('Please select at least one table.');
+      return;
+    }
+
+
+    const alreadyReserved = reservation.tables.some(table => reservedTables.includes(table));
+    if (alreadyReserved) {
+      toast.error('One or more of the selected tables are already reserved.');
+      const availableTables = reservation.tables.filter(table => !reservedTables.includes(table));
+      setReservation({ ...reservation, tables: availableTables });
+      setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch('/api/reservations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reservation),
-      });
+      const res = await reservationServices.createReservation(reservation);
 
-      if (res.ok) {
-        setMessage('Table(s) successfully reserved!');
+      if (res.message) {
+
+        toast.success('Reservation successful!');
+        setTimeout(() => {
+          navigate(0);
+        }, 2000);
         setReservation({
           tables: [],
           date: '',
@@ -70,13 +95,18 @@ const TableReservation = () => {
           contact: '',
           headCount: '',
         });
-        setReservedTables([]);
+
       } else {
-        setMessage('Error making reservation.');
+
+        toast.error('Reservation Failed.Please Try Again');
       }
     } catch (err) {
       console.error(err);
-      setMessage('Network error. Try again later.');
+
+      toast.error('Network error. Try again later.');
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -132,13 +162,11 @@ const TableReservation = () => {
                 type="button"
                 disabled={isReserved}
                 onClick={() => toggleTableSelection(num)}
-                className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${
-                  isReserved
-                    ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                    : isSelected
+                className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
+                  ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                  : isSelected
                     ? 'bg-orange-500 text-white border-orange-700'
-                    : 'bg-gray-100 hover:bg-gray-200'
-                }`}
+                    : 'bg-gray-100 hover:bg-gray-200'}`}
               >
                 {num}
               </button>
@@ -146,7 +174,7 @@ const TableReservation = () => {
           })}
         </div>
 
-        {/* Reservation Details Form */}
+
         <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -162,14 +190,19 @@ const TableReservation = () => {
             </div>
             <div>
               <label className="block mb-1 font-medium">Time</label>
+              <label className="block mb-1 font-medium">Time</label>
               <input
                 type="time"
                 name="time"
                 value={reservation.time}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
+                min="09:00" // 1:00 PM
+                max="23:00" // 3:00 PM
+                step="3600" // Optional: restricts to hourly increments (1 hour = 3600 seconds)
                 required
               />
+ 
             </div>
           </div>
 
@@ -215,10 +248,16 @@ const TableReservation = () => {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-700 transition"
           >
-            Book Table{reservation.tables.length > 1 ? 's' : ''}
+            {loading ? (
+              <span className="animate-spin inline-block w-5 h-5 border-[3px] border-white border-t-transparent rounded-full"></span>
+            ) : (
+              `Book Table${reservation.tables.length > 1 ? 's' : ''}`
+            )}
           </button>
+
         </form>
       </div>
     </>
