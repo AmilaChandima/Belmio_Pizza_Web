@@ -9,6 +9,39 @@ import img1 from "../../assests/1.jpg";
 import img2 from "../../assests/2.jpg";
 import img3 from "../../assests/3.jpg";
 
+// Custom CSS for slider spacing and centered dots
+const sliderStyles = `
+  .slick-slide {
+    margin: 0 16px; /* Adds 16px spacing on both sides (total 32px between slides) */
+  }
+  .slick-list {
+    margin: 0 -16px; /* Adjusts the list to account for the slide margins */
+  }
+  .slick-track {
+    display: flex;
+    align-items: stretch;
+  }
+  .slick-slide > div {
+    height: 100%;
+  }
+  .slick-dots {
+    position: absolute;
+    bottom: 20px;
+    display: flex !important;
+    justify-content: center;
+    width: 100%;
+  }
+  .slick-dots li button:before {
+    font-size: 12px;
+    color: #f97316; /* Orange color for dots */
+    opacity: 0.5;
+  }
+  .slick-dots li.slick-active button:before {
+    opacity: 1;
+    color: #f97316;
+  }
+`;
+
 const ReviewPage = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newReview, setNewReview] = useState({
@@ -123,24 +156,26 @@ const ReviewPage = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: Math.min(reviews.length, 3),
+    slidesToShow: 3, // Always show 3 slides
     slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
+    autoplay: true, // Enable auto-slide
+    autoplaySpeed: 3000, // Slide every 3 seconds
     responsive: [
       {
         breakpoint: 1024,
-        settings: { slidesToShow: Math.min(reviews.length, 2) },
+        settings: { slidesToShow: 2 }, // Show 2 slides on medium screens
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 1 },
+        settings: { slidesToShow: 1 }, // Show 1 slide on small screens
       },
     ],
   };
 
   return (
     <section className="py-16 bg-[#f1f0ea]">
+      {/* Inject custom CSS for slider spacing and centered dots */}
+      <style>{sliderStyles}</style>
       <div className="container mx-auto px-4">
         <h2 className="text-3xl sm:text-4xl font-bold text-orange-600 mb-6 text-center">
           <span className="text-black">CUSTOMER </span> REVIEWS
@@ -181,7 +216,7 @@ const ReviewPage = () => {
               {reviews.map((review, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white p-6 sm:p-6 rounded-xl shadow-xl border-l-4 border-orange-600 w-full sm:w-1/3 relative overflow-hidden h-[380px] flex flex-col justify-between mb-6"
+                  className="bg-white p-6 sm:p-6 rounded-xl shadow-xl border-l-4 border-orange-600 w-full relative overflow-hidden h-[380px] flex flex-col justify-between"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
@@ -202,7 +237,7 @@ const ReviewPage = () => {
                     {review.name}
                   </p>
                   <p className="text-gray-500 text-sm">{review.location || "Unknown"}</p>
-                </motion.div>
+                  </motion.div>
               ))}
             </Slider>
           </div>
