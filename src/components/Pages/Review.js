@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import Slider from "react-slick";
@@ -45,7 +45,39 @@ const ReviewPage = () => {
     },
   ];
 
-  const [reviews, setReviews] = useState(defaultReviews);
+  // Initialize reviews from localStorage or defaultReviews
+  const [reviews, setReviews] = useState(() => {
+    const storedReviews = localStorage.getItem("reviews");
+    return storedReviews ? JSON.parse(storedReviews) : defaultReviews;
+  });
+
+  // Fetch reviews from the backend on component mount
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/reviews");
+        const apiReviews = response.data.data.map((review) => ({
+          ...review,
+          review: review.comment,
+          image: img1, // Fallback image for API reviews
+        }));
+        // Combine default reviews with API reviews
+        const combinedReviews = [...defaultReviews, ...apiReviews];
+        setReviews(combinedReviews);
+        // Update localStorage with the combined reviews
+        localStorage.setItem("reviews", JSON.stringify(combinedReviews));
+      } catch (error) {
+        console.error("Error fetching reviews:", error.response?.data || error.message);
+        // If API call fails, use reviews from localStorage
+        const storedReviews = localStorage.getItem("reviews");
+        if (storedReviews) {
+          setReviews(JSON.parse(storedReviews));
+        }
+      }
+    };
+
+    fetchReviews();
+  }, []); // Empty dependency array to run only on mount
 
   const handleStarClick = (rating) => {
     setNewReview({ ...newReview, rating });
@@ -76,7 +108,10 @@ const ReviewPage = () => {
         review: response.data.data.comment,
         image: img1,
       };
-      setReviews([savedReview, ...reviews]);
+      const updatedReviews = [savedReview, ...reviews];
+      setReviews(updatedReviews);
+      // Update localStorage with the new reviews
+      localStorage.setItem("reviews", JSON.stringify(updatedReviews));
       setNewReview({ name: "", rating: 0, comment: "", location: "" });
       setShowReviewForm(false);
     } catch (error) {
@@ -108,7 +143,7 @@ const ReviewPage = () => {
     <section className="py-16 bg-[#f1f0ea]">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl sm:text-4xl font-bold text-orange-600 mb-6 text-center">
-         <span className = "text-black"> CUSTOMER </span> REVIEWS
+          <span className="text-black">CUSTOMER </span> REVIEWS
         </h2>
 
         {reviews.length <= 3 ? (
@@ -145,29 +180,29 @@ const ReviewPage = () => {
             <Slider {...sliderSettings}>
               {reviews.map((review, index) => (
                 <motion.div
-  key={index}
-  className="bg-white p-6 sm:p-6 rounded-xl shadow-xl border-l-4 border-orange-600 w-full sm:w-1/3 relative overflow-hidden h-[380px] flex flex-col justify-between mb-6" // Added mb-6 for spacing
-  initial={{ opacity: 0, y: 50 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, delay: index * 0.2 }}
-  whileHover={{ scale: 1.03 }}
->
-  <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100 opacity-20 rounded-full -mr-12 -mt-12 animate-pulse" />
-  <img
-    src={review.image}
-    alt={review.name}
-    className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-2 object-cover border-4 border-orange-500"
-    loading="lazy"
-  />
-  <div className="text-center mb-2">{renderStars(review.rating)}</div>
-  <p className="text-gray-600 italic text-sm sm:text-base mb-2 line-clamp-4">
-    "{review.review}"
-  </p>
-  <p className="font-semibold text-orange-600 text-lg sm:text-lg">
-    {review.name}
-  </p>
-  <p className="text-gray-500 text-sm">{review.location || "Unknown"}</p>
-</motion.div>
+                  key={index}
+                  className="bg-white p-6 sm:p-6 rounded-xl shadow-xl border-l-4 border-orange-600 w-full sm:w-1/3 relative overflow-hidden h-[380px] flex flex-col justify-between mb-6"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                  whileHover={{ scale: 1.03 }}
+                >
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100 opacity-20 rounded-full -mr-12 -mt-12 animate-pulse" />
+                  <img
+                    src={review.image}
+                    alt={review.name}
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-2 object-cover border-4 border-orange-500"
+                    loading="lazy"
+                  />
+                  <div className="text-center mb-2">{renderStars(review.rating)}</div>
+                  <p className="text-gray-600 italic text-sm sm:text-base mb-2 line-clamp-4">
+                    "{review.review}"
+                  </p>
+                  <p className="font-semibold text-orange-600 text-lg sm:text-lg">
+                    {review.name}
+                  </p>
+                  <p className="text-gray-500 text-sm">{review.location || "Unknown"}</p>
+                </motion.div>
               ))}
             </Slider>
           </div>
