@@ -124,7 +124,7 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                 isMenuOpen ? "block" : "hidden"
               } md:flex items-center space-y-4 md:space-y-0 md:space-x-8 absolute md:static top-16 left-0 w-full md:w-auto bg-black md:bg-none p-4 md:p-0 transition-all duration-300`}
             >
-              {["Home", "Menu", "Services", "About Us"].map((item, index) => (
+              {["Home", "Menu", "Services", "AboutUs"].map((item, index) => (
                 <motion.li
                   key={item}
                   {...linkAnimation}
