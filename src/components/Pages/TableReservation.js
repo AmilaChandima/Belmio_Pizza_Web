@@ -78,7 +78,7 @@ const TableReservation = () => {
     );
 
     if (availableTables.length === 0) {
-      toast.error('No available tables selected.');
+      toast.error('No available tables selected....');
       return;
     }
 
