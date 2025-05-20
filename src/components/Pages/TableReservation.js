@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
 
-// Generate 30-min interval times between 12:00 PM and 10:00 PM
 const generateTimeSlots = () => {
   const slots = [];
   let hour = 12;
@@ -39,7 +38,6 @@ const TableReservation = () => {
   });
 
   const [reservedTables, setReservedTables] = useState([]);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const { date, inTime, outTime } = reservation;
@@ -102,7 +100,6 @@ const TableReservation = () => {
           headCount: '',
         });
         setReservedTables([]);
-        setMessage('');
       } else {
         toast.error('Error making reservation.');
       }
@@ -119,7 +116,7 @@ const TableReservation = () => {
     <>
       {/* Hero Section */}
       <section
-        className="relative bg-cover bg-center h-[75vh] flex items-center mt-[84px]"
+        className="relative bg-cover bg-center h-[75vh] flex items-center "
         style={{ backgroundImage: `url(${Truck})` }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
@@ -151,7 +148,7 @@ const TableReservation = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
-          {/* Table Selection Grid   */}
+          {/* Table Selection Grid */}
           <div className="grid grid-cols-4 gap-4 mb-8">
             {tableNumbers.map((num) => {
               const isReserved = reservedTables.includes(num);
@@ -163,13 +160,12 @@ const TableReservation = () => {
                   type="button"
                   disabled={isReserved}
                   onClick={() => toggleTableSelection(num)}
-                  className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${
-                    isReserved
+                  className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
                       ? 'bg-gray-300 cursor-not-allowed text-gray-500'
                       : isSelected
-                      ? 'bg-orange-500 text-white border-orange-700'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
+                        ? 'bg-orange-500 text-white border-orange-700'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
                 >
                   {num}
                 </button>
@@ -188,7 +184,7 @@ const TableReservation = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
                 required
-                min={today}
+                min={today} // Set the minimum date to today
               />
             </div>
 
@@ -273,11 +269,10 @@ const TableReservation = () => {
           >
             Book Table{reservation.tables.length > 1 ? 's' : ''}
           </button>
-
-  
         </form>
       </div>
 
+      {/* ToastContainer to display messages */}
       <ToastContainer />
     </>
   );

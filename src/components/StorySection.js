@@ -6,17 +6,17 @@ import { Link } from "react-router-dom";
 function StorySection() {
   return (
     <section className="py-16 bg-white">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-        {/* Left Column */}
+      <div className="max-w-screen-xl mx-auto px-6 md:px-12 lg:px-20 flex flex-col lg:flex-row gap-8">
+        {/* Left Column with Image Animation */}
         <motion.div
-          className="w-full lg:w-1/2"
+          className="lg:w-1/2 mr-4"
           initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
           whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {/* Heading */}
+          {/* Heading with Fade-In Animation */}
           <motion.h2
-            className="text-3xl sm:text-4xl font-passion font-extrabold text-gray-800 mb-6 sm:mb-10 leading-tight text-center lg:text-left"
+            className="text-4xl font-passion md:text-4xl font-extrabold text-gray-800 mb-8"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -24,11 +24,11 @@ function StorySection() {
             DISCOVER OUR <span className="text-orange-500">STORY</span>
           </motion.h2>
 
-          {/* Image */}
+          {/* Image with Scale and Rotate Animation */}
           <motion.img
             src={storyImage}
             alt="Belmio Pizza Shop"
-            className="rounded shadow-lg w-full max-w-full"
+            className="rounded shadow-lg w-full"
             initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
             whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -36,36 +36,34 @@ function StorySection() {
           />
         </motion.div>
 
-        {/* Right Column */}
+        {/* Right Column with Staggered Text Animation */}
         <motion.div
-          className="w-full lg:w-1/2 flex flex-col justify-start"
+          className="lg:w-1/2 flex flex-col justify-start ml-5"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          {/* Paragraph 1 */}
+          {/* Description Paragraphs with Staggered Fade-In */}
           <motion.p
-            className="text-gray-600 text-base sm:text-lg leading-relaxed mb-6"
+            className="text-gray-600 leading-relaxed mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            Belmio Pizza, founded in 2016, is a vibrant and beloved pizza restaurant nestled in the heart of Thalawathugoda. Known for its authentic flavors and fresh ingredients, Belmio Pizza has become a go-to destination for pizza lovers seeking a blend of tradition and innovation.
+            Belmio Pizza, founded in 2016, is a vibrant and beloved pizza restaurant nestled in the heart of Thalawathugoda. Known for its authentic flavors and fresh ingredients, Belmio Pizza has become a go-to destination for pizza lovers seeking a blend of tradition and innovation. With a commitment to quality and customer satisfaction, the restaurant continues to serve delicious, handcrafted pizzas that bring people together, creating memorable dining experiences for families and friends.
           </motion.p>
-
-          {/* Paragraph 2 */}
           <motion.p
-            className="text-gray-600 text-base sm:text-lg leading-relaxed mb-8"
+            className="text-gray-600 leading-relaxed mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            Belmio Pizza is now expanding its reach by embracing technology to enhance customer convenience and engagement. With plans to launch its first e-commerce platform, the restaurant aims to make online ordering and promotions more accessible.
+            Belmio Pizza is now expanding its reach by embracing technology to enhance customer convenience and engagement. With plans to launch its first e-commerce platform, the restaurant aims to make online ordering and promotions more accessible to its growing customer base.
           </motion.p>
 
-          {/* Stats Row */}
+          {/* Details Section with Staggered Fade-In */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10"
+            className="flex gap-8 mb-8 justify-start"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.0 }}
@@ -75,7 +73,7 @@ function StorySection() {
                 SINCE <span className="text-blue-600">2015</span>
               </h3>
               <p className="text-gray-600">
-                Serving quality, tradition, and unforgettable flavors with every slice.
+                Serving quality, tradition, and unforgettable flavors with every slice
               </p>
             </div>
             <div>
@@ -83,22 +81,24 @@ function StorySection() {
                 10K+ <span className="text-blue-600">CLIENTS</span>
               </h3>
               <p className="text-gray-600">
-                Trusted by over 10,000 happy clients who love our delicious pizzas.
+                Trusted by over 10,000 happy clients who love our delicious pizzas
               </p>
             </div>
           </motion.div>
 
-          {/* Button */}
+          {/* Learn More Button with Lift and Scale Animation */}
           <motion.div
-            className="mt-2 self-start"
+            className="mt-4 self-start"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
           >
-            <motion.div whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.3 } }}>
+            <motion.div
+              whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.3 } }}
+            >
               <Link
                 to="/aboutUs"
-                className="px-6 py-3 bg-orange-500 text-white text-base sm:text-lg font-semibold rounded hover:bg-orange-600 transition"
+                className="px-5 py-3 bg-orange-500 text-white font-semibold rounded hover:bg-orange-600 transition"
               >
                 LEARN MORE
               </Link>
