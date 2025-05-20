@@ -15,17 +15,17 @@ const Ser = () => {
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
 
         {/* Content */}
-        <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
-
-          <h1 className="text-4xl text-white font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-24">
-            OUR
-            <span className="text-orange-500"> SERVICES</span>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 flex flex-col justify-center h-full">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-passion font-extrabold leading-snug tracking-tighter mb-4">
+            OUR <span className="text-orange-500">SERVICES</span>
           </h1>
-          <p className="mt-4  text-left text-white md:text-base leading-relaxed ml-24">
-            HOME/SERVICES
+
+          <p className="text-white text-sm sm:text-base leading-relaxed">
+            HOME / SERVICES
           </p>
 
-          <div className="absolute bottom-0 left-[-100px] w-[400px] h-2 bg-orange-500"></div>
+          {/* Orange underline bar */}
+          <div className="absolute bottom-0 left-0 w-40 h-2 bg-orange-500 sm:w-64 md:w-80 lg:w-[400px]"></div>
         </div>
 
 
@@ -35,7 +35,7 @@ const Ser = () => {
 
 
     </>
-    
+
   );
 };
 
