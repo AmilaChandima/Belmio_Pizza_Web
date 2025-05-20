@@ -48,6 +48,6 @@ export const getReservedTables = async (req, res) => {
     res.json({ reservedTables });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error fetching reservations" });
+    res.status(500).json({ message: "Error fetching reservations .." });
   }
 };
