@@ -74,6 +74,7 @@ const TableReservation = () => {
       return;
     }
 
+ 
     const availableTables = reservation.tables.filter(
       (table) => !reservedTables.includes(table)
     );
@@ -82,6 +83,7 @@ const TableReservation = () => {
       toast.error('No available tables selected.');
       return;
     }
+
 
     const updatedReservation = { ...reservation, tables: availableTables };
 
@@ -109,6 +111,7 @@ const TableReservation = () => {
       toast.error('Network error. Try again later.');
     }
   };
+
 
   const today = new Date().toISOString().split('T')[0];
 
