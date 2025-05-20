@@ -1,8 +1,13 @@
+// routes/reservationRoute.js
 import express from "express";
-import { createReservation } from "../controllers/reservationController.js";
+import {
+  createReservation,
+  getReservedTables,
+} from "../controllers/reservationController.js";
 
-const reservationRouter = express.Router();
+const router = express.Router();
 
-reservationRouter.post("/", createReservation);
+router.post("/", createReservation);
+router.get("/", getReservedTables);
 
-export default reservationRouter;
+export default router;

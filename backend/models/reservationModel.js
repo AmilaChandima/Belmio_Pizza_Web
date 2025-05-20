@@ -1,18 +1,7 @@
+// models/Reservation.js
 import mongoose from "mongoose";
 
-const reservationSchema = new mongoose.Schema({
-  tables: {
-    type: [Number],
-    required: true,
-  },
-  date: {
-    type: String,
-    required: true,
-  },
-  time: {
-    type: String,
-    required: true,
-  },
+const ReservationSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -25,7 +14,22 @@ const reservationSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  date: {
+    type: String,
+    required: true,
+  },
+  inTime: {
+    type: String,
+    required: true,
+  },
+  outTime: {
+    type: String,
+    required: true,
+  },
+  tables: {
+    type: [Number],
+    required: true,
+  },
 });
 
-const Reservation = mongoose.models.Reservation || mongoose.model("Reservation", reservationSchema);
-export default Reservation;
+export default mongoose.model("Reservation", ReservationSchema);
