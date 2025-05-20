@@ -176,7 +176,7 @@ const ReviewPage = () => {
   const displayedReviews = reviews.slice(0, 5);
 
   return (
-    <section className="py-16 bg-[#f1f0ea]">
+    <section className="py-16 bg-[#f0efeb]">
       {/* Inject custom CSS for slider spacing and centered dots */}
       <style>{sliderStyles}</style>
       <div className="container mx-auto px-4">
