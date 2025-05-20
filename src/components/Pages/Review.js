@@ -156,14 +156,14 @@ const ReviewPage = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // Always show 3 slides
+    slidesToShow: Math.min(reviews.length, 3), // Show up to 3 slides based on available reviews
     slidesToScroll: 1,
     autoplay: true, // Enable auto-slide
     autoplaySpeed: 3000, // Slide every 3 seconds
     responsive: [
       {
         breakpoint: 1024,
-        settings: { slidesToShow: 2 }, // Show 2 slides on medium screens
+        settings: { slidesToShow: Math.min(reviews.length, 2) }, // Show up to 2 slides on medium screens
       },
       {
         breakpoint: 640,
@@ -171,6 +171,9 @@ const ReviewPage = () => {
       },
     ],
   };
+
+  // Limit the reviews to display only the first 6
+  const displayedReviews = reviews.slice(0, 5);
 
   return (
     <section className="py-16 bg-[#f1f0ea]">
@@ -181,9 +184,9 @@ const ReviewPage = () => {
           <span className="text-black">CUSTOMER </span> REVIEWS
         </h2>
 
-        {reviews.length <= 3 ? (
+        {displayedReviews.length <= 3 ? (
           <div className="flex flex-col sm:flex-row gap-8 justify-center">
-            {reviews.map((review, index) => (
+            {displayedReviews.map((review, index) => (
               <motion.div
                 key={index}
                 className="bg-white p-6 sm:p-6 rounded-xl shadow-xl border-l-4 border-orange-600 w-full sm:w-1/3 relative overflow-hidden h-[380px] flex flex-col justify-between"
@@ -211,9 +214,9 @@ const ReviewPage = () => {
             ))}
           </div>
         ) : (
-          <div className="px-4 ">
+          <div className="px-4">
             <Slider {...sliderSettings}>
-              {reviews.map((review, index) => (
+              {displayedReviews.map((review, index) => (
                 <motion.div
                   key={index}
                   className="bg-white p-6 sm:p-6 rounded-xl shadow-xl border-l-4 border-orange-600 w-full relative overflow-hidden h-[380px] flex flex-col justify-between"
@@ -237,7 +240,7 @@ const ReviewPage = () => {
                     {review.name}
                   </p>
                   <p className="text-gray-500 text-sm">{review.location || "Unknown"}</p>
-                  </motion.div>
+                </motion.div>
               ))}
             </Slider>
           </div>
