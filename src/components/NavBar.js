@@ -167,48 +167,69 @@ const Navbar = ({ setShowLogin, setFormType }) => {
               </div>
 
               {/* Auth buttons (Desktop) */}
-              <div className="hidden md:flex items-center space-x-4">
+              <div className="flex items-center space-x-4">
                 {!token ? (
                   <>
-                    <motion.button
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.5 }}
-                      onClick={() => {
-                        setShowLogin(true);
-                        setFormType("Login");
-                      }}
-                      className="text-white border-2 border-white px-5 py-2 rounded-lg hover:bg-white hover:text-orange-600 transition"
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5 }}
                     >
-                      LOGIN
-                    </motion.button>
-
-                    <motion.button
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.6 }}
-                      onClick={() => {
-                        setShowLogin(true);
-                        setFormType("Sign Up");
-                      }}
-                      className="text-white bg-gradient-to-br from-pink-500 to-orange-600 hover:bg-gradient-to-bl rounded-lg px-5 py-2"
+                      <button
+                        onClick={() => {
+                          setShowLogin(true);
+                          setFormType("Login");
+                        }}
+                        className="text-white border-2 border-white px-5 py-2 rounded-lg hover:bg-white hover:text-orange-600 transition"
+                      >
+                        LOGIN
+                      </button>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                      Sign Up Now!
-                    </motion.button>
+                      <button
+                        onClick={() => {
+                          setShowLogin(true);
+                          setFormType("Sign Up");
+                        }}
+                        className="text-white bg-gradient-to-br from-pink-500 to-orange-600 hover:bg-gradient-to-bl px-5 py-2 rounded-lg"
+                      >
+                        Sign Up
+                      </button>
+                    </motion.div>
                   </>
                 ) : (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
-                  >
-                    <button
-                      onClick={logOut}
-                      className="text-white border-2 border-white px-5 py-2 rounded-lg hover:bg-white hover:text-orange-600 transition"
+                  <>
+                    {isAdmin && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                      >
+                        <button
+                          onClick={() => navigate('/admin/dashboard')}
+                          className="text-white border-2 border-white px-5 py-2 rounded-lg hover:bg-white hover:text-orange-600 transition mr-2"
+                        >
+                          Dashboard
+                        </button>
+                      </motion.div>
+                    )}
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 }}
                     >
-                      LOG OUT
-                    </button>
-                  </motion.div>
+                      <button
+                        onClick={logOut}
+                        className="text-white border-2 border-white px-5 py-2 rounded-lg hover:bg-white hover:text-orange-600 transition"
+                      >
+                        LOG OUT
+                      </button>
+                    </motion.div>
+                  </>
                 )}
               </div>
             </div>
