@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FloorPlanImage from "../../assests/FD.png";
 import Truck from "../../assests/FT.png";
+<<<<<<< HEAD
 
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -11,6 +12,18 @@ const generateTimeSlots = () => {
   let hour = 12;
   let minutes = 30;
   while (hour < 22 || (hour === 22 && minutes === 0)) {
+=======
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
+
+const generateTimeSlots = () => {
+  const slots = [];
+  let hour = 12;
+  let minutes = 0;
+  while (hour < 23 || (hour === 22 && minutes === 0)) {
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
     const h = hour < 10 ? `0${hour}` : hour;
     const m = minutes === 0 ? "00" : minutes;
     slots.push(`${h}:${m}`);
@@ -37,13 +50,16 @@ const TableReservation = () => {
   });
 
   const [reservedTables, setReservedTables] = useState([]);
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const { date, inTime, outTime } = reservation;
     if (date && inTime && outTime) {
       axios
+<<<<<<< HEAD
         .get('/api/reservations', {
+=======
+        .get('http://localhost:4000/api/reservations', {
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
           params: { date, inTime, outTime }
         })
         .then(res => setReservedTables(res.data.reservedTables || []))
@@ -68,15 +84,36 @@ const TableReservation = () => {
     e.preventDefault();
 
     if (reservation.tables.length === 0) {
-      setMessage('Please select at least one table.');
+      toast.error('Please select at least one table.');
       return;
     }
 
+<<<<<<< HEAD
     try {
       const res = await axios.post('/api/reservations', reservation);
 
       if (res.status === 201) {
         setMessage('Table(s) successfully reserved!');
+=======
+    // Remove reserved tables from selected tables
+    const availableTables = reservation.tables.filter(
+      (table) => !reservedTables.includes(table)
+    );
+
+    if (availableTables.length === 0) {
+      toast.error('No available tables selected.');
+      return;
+    }
+
+    // Update the reservation object with the available tables
+    const updatedReservation = { ...reservation, tables: availableTables };
+
+    try {
+      const res = await axios.post('http://localhost:4000/api/reservations', updatedReservation);
+
+      if (res.status === 201) {
+        toast.success('Table(s) successfully reserved!');
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
         setReservation({
           tables: [],
           date: '',
@@ -88,19 +125,26 @@ const TableReservation = () => {
         });
         setReservedTables([]);
       } else {
-        setMessage('Error making reservation.');
+        toast.error('Error making reservation.');
       }
     } catch (err) {
       console.error(err);
-      setMessage('Network error. Try again later.');
+      toast.error('Network error. Try again later.');
     }
   };
+
+  // Get today's date in yyyy-mm-dd format
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <>
       {/* Hero Section */}
       <section
+<<<<<<< HEAD
         className="relative bg-cover bg-center h-[75vh] flex items-center mt-[84px]"
+=======
+        className="relative bg-cover bg-center h-[75vh] flex items-center "
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
         style={{ backgroundImage: `url(${Truck})` }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
@@ -144,6 +188,7 @@ const TableReservation = () => {
                   type="button"
                   disabled={isReserved}
                   onClick={() => toggleTableSelection(num)}
+<<<<<<< HEAD
                   className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${
                     isReserved
                       ? 'bg-gray-300 cursor-not-allowed text-gray-500'
@@ -151,6 +196,14 @@ const TableReservation = () => {
                       ? 'bg-orange-500 text-white border-orange-700'
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
+=======
+                  className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
+                      ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                      : isSelected
+                        ? 'bg-orange-500 text-white border-orange-700'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
                 >
                   {num}
                 </button>
@@ -169,6 +222,7 @@ const TableReservation = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
                 required
+                min={today} // Set the minimum date to today
               />
             </div>
 
@@ -229,7 +283,11 @@ const TableReservation = () => {
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
               required
+<<<<<<< HEAD
               placeholder="e.g., 123-456-7890"
+=======
+              placeholder="0779126119"
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
             />
           </div>
 
@@ -259,6 +317,9 @@ const TableReservation = () => {
           )}
         </form>
       </div>
+
+      {/* ToastContainer to display messages */}
+      <ToastContainer />
     </>
   );
 };

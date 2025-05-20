@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 // controllers/reservationController.js
 import Reservation from "../models/Reservation.js";
 
@@ -65,23 +66,63 @@ const createReservation = async (req, res) => {
   ) {
     return res.status(400).json({ success: false, message: 'All fields are required, and at least one table must be selected.' });
   }
+=======
+// controllers/reservationController.js
+import Reservation from "../models/ReservationModel.js"
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
 
+export const createReservation = async (req, res) => {
   try {
-    const newReservation = new Reservation({
-      tables,
+    const { date, inTime, outTime, tables } = req.body;
+
+    // Check if any of the selected tables are already reserved in the given time range
+    const overlappingReservations = await Reservation.find({
       date,
-      time,
-      name,
-      contact,
-      headCount,
+      tables: { $in: tables },
+      $or: [
+        { inTime: { $lt: outTime }, outTime: { $gt: inTime } }
+      ],
     });
 
-    const savedReservation = await newReservation.save();
-    res.status(201).json({ success: true, reservation: savedReservation });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to create reservation', error: error.message });
+    if (overlappingReservations.length > 0) {
+      return res.status(409).json({
+        message: "Some selected tables are already reserved for this time period.",
+      });
+    }
+
+    const newReservation = new Reservation(req.body);
+    await newReservation.save();
+    res.status(201).json({ message: "Reservation successful" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
+<<<<<<< HEAD
 export { createReservation };
 >>>>>>> ab5f81a7be354c721652a9c6e4c6053fe233dd1e
+=======
+export const getReservedTables = async (req, res) => {
+  try {
+    const { date, inTime, outTime } = req.query;
+
+    if (!date || !inTime || !outTime) {
+      return res.status(400).json({ message: "Missing date, inTime or outTime" });
+    }
+
+    const reservations = await Reservation.find({
+      date,
+      $or: [
+        { inTime: { $lt: outTime }, outTime: { $gt: inTime } }
+      ]
+    });
+
+    const reservedTables = reservations.flatMap((r) => r.tables);
+    res.json({ reservedTables });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching reservations" });
+  }
+};
+>>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
