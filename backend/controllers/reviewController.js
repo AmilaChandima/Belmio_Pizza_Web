@@ -34,7 +34,38 @@ const createReview = async (req, res) => {
 
 const getReviews = async (req, res) => {
   try {
-    const reviews = await reviewModel.find().sort({ createdAt: -1 });
+    let reviews = await reviewModel.find().sort({ createdAt: -1 });
+
+    // If no reviews exist, create some test data
+    if (reviews.length === 0) {
+      const testReviews = [
+        {
+          name: "John Smith",
+          rating: 5,
+          comment: "Best pizza in town! The crust is perfect and toppings are fresh.",
+          location: "Colombo"
+        },
+        {
+          name: "Sarah Wilson",
+          rating: 4,
+          comment: "Great service and delicious food. Will come back again!",
+          location: "Kandy"
+        },
+        {
+          name: "Michael Brown",
+          rating: 5,
+          comment: "Amazing pizza and friendly staff. Highly recommended!",
+          location: "Galle"
+        }
+      ];
+
+      // Insert test reviews
+      await reviewModel.insertMany(testReviews);
+      
+      // Fetch the newly created reviews
+      reviews = await reviewModel.find().sort({ createdAt: -1 });
+    }
+
     res.status(200).json({
       success: true,
       data: reviews,
