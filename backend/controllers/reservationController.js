@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 // controllers/reservationController.js
-import Reservation from "../models/Reservation.js";
+import Reservation from "../models/Reservation.js"; // Adjust to correct model file if needed
 
 export const createReservation = async (req, res) => {
   try {
@@ -66,10 +64,7 @@ const createReservation = async (req, res) => {
   ) {
     return res.status(400).json({ success: false, message: 'All fields are required, and at least one table must be selected.' });
   }
-=======
-// controllers/reservationController.js
-import Reservation from "../models/ReservationModel.js"
->>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
+>>>>>>>>> Temporary merge branch 2
 
 export const createReservation = async (req, res) => {
   try {
@@ -99,10 +94,7 @@ export const createReservation = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-export { createReservation };
->>>>>>> ab5f81a7be354c721652a9c6e4c6053fe233dd1e
-=======
+<<<<<<<<< Temporary merge branch 1
 export const getReservedTables = async (req, res) => {
   try {
     const { date, inTime, outTime } = req.query;
@@ -125,4 +117,7 @@ export const getReservedTables = async (req, res) => {
     res.status(500).json({ message: "Error fetching reservations" });
   }
 };
->>>>>>> 4cd1a64fd305406d216a5146aed2d2f20fdc1eee
+=========
+export { createReservation };
+>>>>>>> ab5f81a7be354c721652a9c6e4c6053fe233dd1e
+>>>>>>>>> Temporary merge branch 2
