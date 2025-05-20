@@ -116,7 +116,7 @@ const TableReservation = () => {
     <>
       {/* Hero Section */}
       <section
-        className="relative bg-cover bg-center h-[75vh] flex items-center mt-[84px]"
+        className="relative bg-cover bg-center h-[75vh] flex items-center "
         style={{ backgroundImage: `url(${Truck})` }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
