@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FloorPlanImage from "../../assests/FD.png";
 import Truck from "../../assests/FT.png";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
 
-// Generate 30-min interval times between 12:30 PM and 10:00 PM
+// Generate 30-min interval times between 12:00 PM and 10:00 PM
 const generateTimeSlots = () => {
   const slots = [];
   let hour = 12;
-  let minutes = 30;
-  while (hour < 22 || (hour === 22 && minutes === 0)) {
+  let minutes = 0;
+  while (hour < 23 || (hour === 22 && minutes === 0)) {
     const h = hour < 10 ? `0${hour}` : hour;
     const m = minutes === 0 ? "00" : minutes;
     slots.push(`${h}:${m}`);
@@ -37,13 +39,13 @@ const TableReservation = () => {
   });
 
   const [reservedTables, setReservedTables] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const { date, inTime, outTime } = reservation;
     if (date && inTime && outTime) {
       axios
-        .get('/api/reservations', {
+        .get('http://localhost:4000/api/reservations', {
           params: { date, inTime, outTime }
         })
         .then(res => setReservedTables(res.data.reservedTables || []))
@@ -68,15 +70,26 @@ const TableReservation = () => {
     e.preventDefault();
 
     if (reservation.tables.length === 0) {
-      setMessage('Please select at least one table.');
+      toast.error('Please select at least one table.');
       return;
     }
 
+    const availableTables = reservation.tables.filter(
+      (table) => !reservedTables.includes(table)
+    );
+
+    if (availableTables.length === 0) {
+      toast.error('No available tables selected.');
+      return;
+    }
+
+    const updatedReservation = { ...reservation, tables: availableTables };
+
     try {
-      const res = await axios.post('/api/reservations', reservation);
+      const res = await axios.post('http://localhost:4000/api/reservations', updatedReservation);
 
       if (res.status === 201) {
-        setMessage('Table(s) successfully reserved!');
+        toast.success('Table(s) successfully reserved!');
         setReservation({
           tables: [],
           date: '',
@@ -87,14 +100,17 @@ const TableReservation = () => {
           headCount: '',
         });
         setReservedTables([]);
+        setMessage('');
       } else {
-        setMessage('Error making reservation.');
+        toast.error('Error making reservation.');
       }
     } catch (err) {
       console.error(err);
-      setMessage('Network error. Try again later.');
+      toast.error('Network error. Try again later.');
     }
   };
+
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <>
@@ -169,6 +185,7 @@ const TableReservation = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
                 required
+                min={today}
               />
             </div>
 
@@ -229,7 +246,7 @@ const TableReservation = () => {
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
               required
-              placeholder="e.g., 123-456-7890"
+              placeholder="0779126119"
             />
           </div>
 
@@ -259,6 +276,8 @@ const TableReservation = () => {
           )}
         </form>
       </div>
+
+      <ToastContainer />
     </>
   );
 };
