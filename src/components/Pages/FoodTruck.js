@@ -20,7 +20,7 @@ const FoodTruck = () => {
     <>
       {/* Hero Section */}
       <section
-        className="relative bg-cover bg-center h-[75vh] flex items-center mt-[84px]"
+        className="relative bg-cover bg-center h-[75vh] flex items-center "
         style={{
           backgroundImage: `url(${Truck})`,
         }}
