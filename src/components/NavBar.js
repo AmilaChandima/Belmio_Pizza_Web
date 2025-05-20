@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import myLogo from "../assests/logo.jpg";
-import { Link } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 import { motion } from "framer-motion";
 
@@ -16,6 +15,16 @@ const Navbar = ({ setShowLogin, setFormType }) => {
   const { token, setToken } = useContext(StoreContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check if user is admin when component mounts or token changes
+    const checkAdmin = () => {
+      const adminStatus = localStorage.getItem('isAdmin') === 'true';
+      setIsAdmin(adminStatus);
+    };
+    checkAdmin();
+  }, [token]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +36,9 @@ const Navbar = ({ setShowLogin, setFormType }) => {
 
   const logOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
     setToken("");
+    setIsAdmin(false);
     navigate("/");
   };
 
@@ -224,42 +235,65 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                 </motion.div>
               ))}
 
-              <div className="flex items-center justify-between">
-                {!token ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        setShowLogin(true);
-                        setFormType("Login");
-                        setIsMenuOpen(false);
-                      }}
-                      className="text-white border px-4 py-2 rounded hover:bg-white hover:text-orange-600"
-                    >
-                      LOGIN
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowLogin(true);
-                        setFormType("Sign Up");
-                        setIsMenuOpen(false);
-                      }}
-                      className="text-white bg-gradient-to-br from-pink-500 to-orange-600 hover:bg-gradient-to-bl px-4 py-2 rounded"
-                    >
-                      Sign Up
-                    </button>
-                  </>
-                ) : (
+              {isAdmin ? (
+                <div className="flex flex-col space-y-3">
+                  <button
+                    onClick={() => {
+                      navigate('/admin/dashboard');
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-white bg-transparent px-5 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-orange-600 transition-all duration-300 font-medium text-base"
+                  >
+                    Dashboard
+                  </button>
                   <button
                     onClick={() => {
                       logOut();
                       setIsMenuOpen(false);
                     }}
-                    className="text-white border px-4 py-2 rounded hover:bg-white hover:text-orange-600"
+                    className="text-white bg-transparent px-5 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-orange-600 transition-all duration-300 font-medium text-base"
                   >
                     LOG OUT
                   </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  {!token ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setShowLogin(true);
+                          setFormType("Login");
+                          setIsMenuOpen(false);
+                        }}
+                        className="text-white border px-4 py-2 rounded hover:bg-white hover:text-orange-600"
+                      >
+                        LOGIN
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowLogin(true);
+                          setFormType("Sign Up");
+                          setIsMenuOpen(false);
+                        }}
+                        className="text-white bg-gradient-to-br from-pink-500 to-orange-600 hover:bg-gradient-to-bl px-4 py-2 rounded"
+                      >
+                        Sign Up
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        logOut();
+                        setIsMenuOpen(false);
+                      }}
+                      className="text-white border px-4 py-2 rounded hover:bg-white hover:text-orange-600"
+                    >
+                      LOG OUT
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </nav>
@@ -269,5 +303,3 @@ const Navbar = ({ setShowLogin, setFormType }) => {
 };
 
 export default Navbar;
-
-

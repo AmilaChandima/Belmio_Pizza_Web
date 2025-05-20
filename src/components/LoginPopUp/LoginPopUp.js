@@ -3,8 +3,12 @@ import { StoreContext } from "../../context/StoreContext.js";
 import axios from "axios";
 import Logo from "../../assests/logo.jpg";
 
+import { useNavigate } from "react-router-dom";
+
+
 function LoginPopUp({ setShowLogin, formType, setFormType }) {
   const { url, setToken } = useContext(StoreContext);
+  const navigate = useNavigate();
 
   const [data, setData] = useState({
     name: "",
@@ -29,7 +33,12 @@ function LoginPopUp({ setShowLogin, formType, setFormType }) {
       if (response.data.success) {
         setToken(response.data.token);
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("isAdmin", response.data.isAdmin);
         setShowLogin(false);
+        
+        if (response.data.isAdmin) {
+          navigate("/admin/dashboard");
+        }
       } else {
         setErrorMessage(response.data.message);
       }
