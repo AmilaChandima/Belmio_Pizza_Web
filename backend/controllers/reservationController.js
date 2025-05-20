@@ -1,7 +1,6 @@
 // controllers/reservationController.js
-import Reservation from "../models/Reservation.js"; // Adjust to correct model file if needed
+import Reservation from "../models/ReservationModel.js"
 
-// Create a new reservation
 export const createReservation = async (req, res) => {
   try {
     const { date, inTime, outTime, tables } = req.body;
@@ -30,7 +29,6 @@ export const createReservation = async (req, res) => {
   }
 };
 
-// Get reserved tables for a given date and time range
 export const getReservedTables = async (req, res) => {
   try {
     const { date, inTime, outTime } = req.query;
@@ -54,7 +52,7 @@ export const getReservedTables = async (req, res) => {
   }
 };
 
-// Get all reservations (Admin view or management purposes)
+// Get all reservations
 export const getAllReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({ date: -1, inTime: -1 });
