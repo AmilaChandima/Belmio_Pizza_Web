@@ -72,7 +72,7 @@ const TableReservation = () => {
       return;
     }
 
-    // Remove reserved tables from selected tables
+ 
     const availableTables = reservation.tables.filter(
       (table) => !reservedTables.includes(table)
     );
@@ -82,7 +82,7 @@ const TableReservation = () => {
       return;
     }
 
-    // Update the reservation object with the available tables
+
     const updatedReservation = { ...reservation, tables: availableTables };
 
     try {
@@ -109,7 +109,7 @@ const TableReservation = () => {
     }
   };
 
-  // Get today's date in yyyy-mm-dd format
+
   const today = new Date().toISOString().split('T')[0];
 
   return (
