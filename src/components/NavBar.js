@@ -17,6 +17,16 @@ const Navbar = ({ setShowLogin, setFormType }) => {
   const { token, setToken } = useContext(StoreContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check if user is admin when component mounts or token changes
+    const checkAdmin = () => {
+      const adminStatus = localStorage.getItem('isAdmin') === 'true';
+      setIsAdmin(adminStatus);
+    };
+    checkAdmin();
+  }, [token]);
 
   // Scroll event to show navbar
   useEffect(() => {
@@ -31,7 +41,9 @@ const Navbar = ({ setShowLogin, setFormType }) => {
 
   const logOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
     setToken("");
+    setIsAdmin(false);
     navigate("/");
   };
 
@@ -211,12 +223,22 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
                 >
-                  <button
-                    onClick={logOut}
-                    className="text-white bg-transparent px-5 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-orange-600 transition-all duration-300 font-medium text-base"
-                  >
-                    LOG OUT
-                  </button>
+                  <div className="flex items-center space-x-4">
+                    {isAdmin && (
+                      <button
+                        onClick={() => navigate('/admin/dashboard')}
+                        className="text-white bg-transparent px-5 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-orange-600 transition-all duration-300 font-medium text-base"
+                      >
+                        Dashboard
+                      </button>
+                    )}
+                    <button
+                      onClick={logOut}
+                      className="text-white bg-transparent px-5 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-orange-600 transition-all duration-300 font-medium text-base"
+                    >
+                      LOG OUT
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </div>

@@ -51,3 +51,20 @@ export const getReservedTables = async (req, res) => {
     res.status(500).json({ message: "Error fetching reservations" });
   }
 };
+
+// Get all reservations
+export const getAllReservations = async (req, res) => {
+  try {
+    const reservations = await Reservation.find().sort({ date: -1, inTime: -1 });
+    res.status(200).json({
+      success: true,
+      data: reservations
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching all reservations"
+    });
+  }
+};
