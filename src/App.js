@@ -21,6 +21,8 @@ import TableReservation from "./components/Pages/TableReservation";
 import LoadingScreen from "./components/LoadingScreen";
 import AddItem from "./components/AdminDashboard/AddItem";
 import EditItem from "./components/AdminDashboard/EditItem";
+import Dashboard from "./components/AdminDashboard/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Wrapper component to handle loading state with route changes
 const AppWithLoading = () => {
@@ -75,13 +77,14 @@ const AppWithLoading = () => {
           }
         />
         <Route path="/menu" element={<MenuPage />} />
-        <Route path="/services" element={<AddItem />} />
+        <Route path="/services" element={<ProtectedRoute><AddItem /></ProtectedRoute>} />
         <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
         <Route path="/services/table" element={<TableReservation />} />
         <Route path="/reviews" element={<ReviewPage />} />
-        <Route path="/edit/:id" element={<EditItem />} />
+        <Route path="/edit/:id" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
 
