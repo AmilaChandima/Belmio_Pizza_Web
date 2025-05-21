@@ -63,7 +63,7 @@ const getReviews = async (req, res) => {
       await reviewModel.insertMany(testReviews);
       
       // Fetch the newly created reviews
-      reviews = await reviewModel.find().sort({ createdAt: -1 });
+      reviews = await reviewModel.find().sort({ createdAt: 1 });
     }
 
     res.status(200).json({
