@@ -77,8 +77,9 @@ const AppWithLoading = () => {
           }
         />
         <Route path="/menu" element={<MenuPage />} />
-        <Route path="/services" element={<ProtectedRoute><AddItem /></ProtectedRoute>} />
+        <Route path="/services" element={<Ser/>} />
         <Route path="/aboutUs" element={<AboutUs />} />
+        <Route path="/add" element={<ProtectedRoute><AddItem /></ProtectedRoute>} />
         <Route path="/services/fastDelivery" element={<FastDelivery />} />
         <Route path="/services/foodTruck" element={<FoodTruck />} />
         <Route path="/services/table" element={<TableReservation />} />

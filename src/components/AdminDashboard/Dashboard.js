@@ -181,7 +181,7 @@ const Dashboard = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 font-passion">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Link 
-                to="/services" 
+                to="/add" 
                 className="flex items-center justify-center bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 transition"
               >
                 Add New Menu Item
