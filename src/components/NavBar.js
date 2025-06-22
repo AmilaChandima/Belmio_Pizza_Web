@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import myLogo from "../assests/logo.jpg";
 import { StoreContext } from "../context/StoreContext";
 import { motion } from "framer-motion";
+import { useCart } from "../contexts/CartContext";
 
 const googleFontsLink = `
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +14,7 @@ const googleFontsLink = `
 const Navbar = ({ setShowLogin, setFormType }) => {
   const navigate = useNavigate();
   const { token, setToken } = useContext(StoreContext);
+  const { cartItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -130,7 +132,7 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="relative"
               >
-                <button className="text-white hover:text-orange-200">
+                <Link to="/cart" className="text-white hover:text-orange-200">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
@@ -139,9 +141,9 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                     />
                   </svg>
                   <span className="absolute -top-2 -right-2 bg-white text-orange-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-orange-200">
-                    2
+                    {cartItems.length}
                   </span>
-                </button>
+                </Link>
               </motion.div>
 
               <div className="md:hidden">
