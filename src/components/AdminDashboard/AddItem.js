@@ -61,7 +61,7 @@ const AddItem = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.name || !formData.description || !formData.prices.medium || !formData.prices.large) {
+    if (!formData.name || !formData.description || !formData.prices.medium ) {
       toast.error("Please fill all the fields.");
       setLoading(false);
       return;
@@ -205,7 +205,7 @@ const AddItem = () => {
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
               placeholder="e.g., Rs. 1499.00"
-              step="0.01"
+              step="1000"
               required
             />
           </div>
@@ -218,8 +218,8 @@ const AddItem = () => {
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
               placeholder="e.g., RS. 2999.00"
-              step="0.01"
-              required
+              step="1000"
+              
             />
           </div>
         </div>
