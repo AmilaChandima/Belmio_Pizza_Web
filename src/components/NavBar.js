@@ -328,3 +328,4 @@ const Navbar = ({ setShowLogin, setFormType }) => {
 };
 
 export default Navbar;
+
