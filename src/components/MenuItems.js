@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { menuServices } from '../Services/MenuServices';
+import { useCart } from '../contexts/CartContext';
+import { StoreContext } from '../context/StoreContext';
 
-
-const MenuItem = ({ item, onAddToCart, onDelete }) => {
+const MenuItem = ({ item, onDelete }) => {
   const [hovered, setHovered] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  const { addToCart } = useCart();
+  const { token } = useContext(StoreContext);
+  const navigate = useNavigate();
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = () => {
+      const adminStatus = localStorage.getItem('isAdmin') === 'true';
+      setIsAdmin(adminStatus);
+    };
+    checkAdmin();
+  }, []);
+
+  // Handle add to cart with login check
   const handleAddToCart = (size) => {
+    if (!token) {
+      toast.error('Please login to add items to cart');
+      navigate('/login');
+      return;
+    }
     setSelectedSize(size);
-    onAddToCart(item, size);
+    addToCart(item, size);
   };
 
   const handleDelete = async () => {
@@ -34,27 +55,26 @@ const MenuItem = ({ item, onAddToCart, onDelete }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Edit & Delete Buttons */}
-      
-      <div className="absolute top-1 right-1 flex gap-6 z-10">
-        <Link
-          to={`/edit/${item._id}`}
-          className="text-customBlue hover:text-yellow-500 transition-all"
-          title="Edit Menu Item"
-        >
-          <FiEdit2 size={24} className="hover:scale-110 transition-transform" />
-        </Link>
+      {/* Edit & Delete Buttons - Only visible for admin */}
+      {isAdmin && (
+        <div className="absolute top-1 right-1 flex gap-6 z-10">
+          <Link
+            to={`/edit/${item._id}`}
+            className="text-customBlue hover:text-yellow-500 transition-all"
+            title="Edit Menu Item"
+          >
+            <FiEdit2 size={24} className="hover:scale-110 transition-transform" />
+          </Link>
 
-        <button
-          onClick={handleDelete}
-          className="text-red-500 hover:text-red-900 transition-all"
-          title="Delete Menu Item"
-        >
-          <FiTrash2 size={24} className="hover:scale-110 transition-transform" />
-        </button>
-      </div>
-
-
+          <button
+            onClick={handleDelete}
+            className="text-red-500 hover:text-red-900 transition-all"
+            title="Delete Menu Item"
+          >
+            <FiTrash2 size={24} className="hover:scale-110 transition-transform" />
+          </button>
+        </div>
+      )}
 
       {/* Image */}
       <img
@@ -86,24 +106,32 @@ const MenuItem = ({ item, onAddToCart, onDelete }) => {
                 ? 'bg-orange-500 text-white' : 'bg-black text-white hover:bg-gray-800'}`}
               onClick={() => handleAddToCart('medium')}
             >
-              MEDIUM PIZZA
+              MEDIUM
               <br />
               <span className={selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
                 RS. {item.prices.medium}.00
               </span>
             </button>
 
-            <button
-              className={`flex-1 px-4 py-2 rounded ${selectedSize === 'large'
-                ? 'bg-orange-500 text-white' : 'bg-black text-white hover:bg-gray-800'}`}
-              onClick={() => handleAddToCart('large')}
-            >
-              LARGE PIZZA
-              <br />
-              <span className={selectedSize === 'large' ? 'text-white' : 'text-orange-500'}>
-                RS. {item.prices.large}.00
-              </span>
-            </button>
+            {item.prices.large && (
+              <button
+                className={`flex-1 px-4 py-2 rounded ${selectedSize === 'large'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-black text-white hover:bg-gray-800'
+                  }`}
+                onClick={() => handleAddToCart('large')}
+              >
+                LARGE
+                <br />
+                <span
+                  className={
+                    selectedSize === 'large' ? 'text-white' : 'text-orange-500'
+                  }
+                >
+                  RS. {item.prices.large}.00
+                </span>
+              </button>
+            )}
           </div>
 
           <button

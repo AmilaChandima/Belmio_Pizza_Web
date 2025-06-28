@@ -105,7 +105,7 @@ const TableReservation = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error('Network error. Try again later.');
+      toast.error('Error making reservation.Time Slot is Already Reserved.');
     }
   };
 
