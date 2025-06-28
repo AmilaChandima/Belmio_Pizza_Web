@@ -10,8 +10,8 @@ const letterVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.1, // Increased delay to 100ms per letter for slower stagger
-      duration: 0.5, // Increased duration to 0.5s for smoother, slower animation
+      delay: i * 0.01, // Increased delay to 100ms per letter for slower stagger
+      duration: 0.3, // Increased duration to 0.5s for smoother, slower animation
     },
   }),
 };
@@ -28,7 +28,7 @@ const containerVariants = {
 };
 
 const Hero = () => {
-  // Function to split text into letters and wrap each in motion.span
+
   const animateText = (text) => {
     return text.split("").map((char, index) => (
       <motion.span
@@ -48,7 +48,7 @@ const Hero = () => {
     <section className="relative h-screen flex items-center pt-[64px] overflow-hidden">
       {/* Video Background */}
       <video
-        className="absolute inset-0 w-full h-full object-cover opacity-70"
+        className="absolute inset-0 w-full h-full object-fill opacity-100 transform scale-125"
         src={heroVideo}
         autoPlay
         loop
@@ -56,8 +56,9 @@ const Hero = () => {
         playsInline
       />
 
+
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+      <div className="absolute inset-0 bg-black bg-opacity-60"></div>
 
       {/* Content */}
       <div className="relative z-10 text-white px-32 text-left">

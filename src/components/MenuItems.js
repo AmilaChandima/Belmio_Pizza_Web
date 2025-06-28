@@ -10,9 +10,19 @@ const MenuItem = ({ item, onDelete }) => {
   const [hovered, setHovered] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+
   const { addToCart } = useCart();
   const { token } = useContext(StoreContext);
   const navigate = useNavigate();
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = () => {
+      const adminStatus = localStorage.getItem('isAdmin') === 'true';
+      setIsAdmin(adminStatus);
+    };
+    checkAdmin();
+  }, []);
 
   // Handle add to cart with login check
   const handleAddToCart = (size) => {
@@ -24,14 +34,6 @@ const MenuItem = ({ item, onDelete }) => {
     setSelectedSize(size);
     addToCart(item, size);
   };
-
-  useEffect(() => {
-    const checkAdmin = () => {
-      const adminStatus = localStorage.getItem('isAdmin') === 'true';
-      setIsAdmin(adminStatus);
-    };
-    checkAdmin();
-  }, []);
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this Menu Item?");
@@ -74,8 +76,6 @@ const MenuItem = ({ item, onDelete }) => {
         </div>
       )}
 
-
-
       {/* Image */}
       <img
         src={item.image}
@@ -106,24 +106,32 @@ const MenuItem = ({ item, onDelete }) => {
                 ? 'bg-orange-500 text-white' : 'bg-black text-white hover:bg-gray-800'}`}
               onClick={() => handleAddToCart('medium')}
             >
-              MEDIUM PIZZA
+              MEDIUM
               <br />
               <span className={selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
                 RS. {item.prices.medium}.00
               </span>
             </button>
 
-            <button
-              className={`flex-1 px-4 py-2 rounded ${selectedSize === 'large'
-                ? 'bg-orange-500 text-white' : 'bg-black text-white hover:bg-gray-800'}`}
-              onClick={() => handleAddToCart('large')}
-            >
-              LARGE PIZZA
-              <br />
-              <span className={selectedSize === 'large' ? 'text-white' : 'text-orange-500'}>
-                RS. {item.prices.large}.00
-              </span>
-            </button>
+            {item.prices.large && (
+              <button
+                className={`flex-1 px-4 py-2 rounded ${selectedSize === 'large'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-black text-white hover:bg-gray-800'
+                  }`}
+                onClick={() => handleAddToCart('large')}
+              >
+                LARGE
+                <br />
+                <span
+                  className={
+                    selectedSize === 'large' ? 'text-white' : 'text-orange-500'
+                  }
+                >
+                  RS. {item.prices.large}.00
+                </span>
+              </button>
+            )}
           </div>
 
           <button

@@ -91,7 +91,7 @@ const MenuPage = () => {
       </div>
 
       {/* Menu Items */}
-      <div className="menu-items grid sm:grid-cols-2 grid-cols-3 lg:grid-cols-4 mx-20 mb-20 justify-evenly mt-24">
+      <div className="menu-items gap-8 grid sm:grid-cols-2 grid-cols-3 lg:grid-cols-4 mx-20 mb-20 justify-evenly mt-24">
         {loading ? (
           <p className="text-center col-span-full text-gray-500">Loading menu...</p>
         ) : filteredMenu.length > 0 ? (
