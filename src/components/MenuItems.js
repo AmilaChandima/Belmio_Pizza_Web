@@ -23,14 +23,24 @@ const MenuItem = ({ item, onDelete }) => {
     checkAdmin();
   }, []);
 
+  // Handle size selection
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+  };
+
+  // Handle add to cart
   const handleAddToCart = (size) => {
     if (!token) {
       toast.error('Please login to add items to cart');
       navigate('/login');
       return;
     }
-    setSelectedSize(size);
+    if (!size) {
+      toast.warning('Please select a size first');
+      return;
+    }
     addToCart(item, size);
+    setSelectedSize(null);
   };
 
   const handleDelete = async () => {
@@ -106,7 +116,7 @@ const MenuItem = ({ item, onDelete }) => {
                   ? 'bg-orange-500 text-white'
                   : 'bg-black text-white hover:bg-gray-800'
               }`}
-              onClick={() => handleAddToCart('medium')}
+              onClick={() => handleSizeSelect('medium')}
             >
               MEDIUM <br />
               <span className={selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
@@ -121,7 +131,7 @@ const MenuItem = ({ item, onDelete }) => {
                     ? 'bg-orange-500 text-white'
                     : 'bg-black text-white hover:bg-gray-800'
                 }`}
-                onClick={() => handleAddToCart('large')}
+                onClick={() => handleSizeSelect('large')}
               >
                 LARGE <br />
                 <span className={selectedSize === 'large' ? 'text-white' : 'text-orange-500'}>
@@ -132,10 +142,15 @@ const MenuItem = ({ item, onDelete }) => {
           </div>
 
           <button
-            className="mt-4 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 text-sm font-bold"
-            onClick={() => handleAddToCart(selectedSize || 'medium')}
+            className={`mt-4 w-full py-2 text-sm font-bold rounded ${
+              selectedSize
+                ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
+                : 'bg-gray-400 cursor-not-allowed text-gray-600'
+            }`}
+            onClick={() => handleAddToCart(selectedSize)}
+            disabled={!selectedSize}
           >
-            ADD TO CART →
+            {selectedSize ? 'ADD TO CART →' : 'SELECT SIZE FIRST'}
           </button>
         </div>
       )}
