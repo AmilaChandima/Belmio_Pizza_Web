@@ -124,8 +124,9 @@ const Navbar = ({ setShowLogin, setFormType }) => {
               ))}
             </div>
 
-            {/* Right section (cart + auth buttons) */}
+            {/* Right section (cart + hamburger menu + auth buttons desktop only) */}
             <div className="flex items-center space-x-4 md:space-x-6">
+              {/* Cart Icon - always visible */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -146,6 +147,7 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                 </Link>
               </motion.div>
 
+              {/* Hamburger Menu - visible only on mobile */}
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -168,8 +170,8 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                 </button>
               </div>
 
-              {/* Auth buttons (Desktop) */}
-              <div className="flex items-center space-x-4">
+              {/* Auth buttons - visible only on md and larger screens */}
+              <div className="hidden md:flex items-center space-x-4">
                 {!token ? (
                   <>
                     <motion.div
