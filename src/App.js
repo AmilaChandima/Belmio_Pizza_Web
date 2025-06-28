@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
+import { CartProvider } from './contexts/CartContext';
 
 import NavBar from "./components/NavBar";
 import StorySection from "./components/StorySection";
@@ -23,6 +24,7 @@ import AddItem from "./components/AdminDashboard/AddItem";
 import EditItem from "./components/AdminDashboard/EditItem";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Cart from "./components/Cart";
 
 // Wrapper component to handle loading state with route changes
 const AppWithLoading = () => {
@@ -84,6 +86,7 @@ const AppWithLoading = () => {
         <Route path="/services/foodTruck" element={<FoodTruck />} />
         <Route path="/services/table" element={<TableReservation />} />
         <Route path="/reviews" element={<ReviewPage />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/edit/:id" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="*" element={<div>Page Not Found</div>} />
@@ -97,7 +100,9 @@ const AppWithLoading = () => {
 function App() {
   return (
     <Router>
-      <AppWithLoading />
+      <CartProvider>
+        <AppWithLoading />
+      </CartProvider>
     </Router>
   );
 }
