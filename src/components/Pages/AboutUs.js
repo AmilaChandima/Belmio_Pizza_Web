@@ -3,7 +3,7 @@ import heroImage from "../../assests/AboutUs.png";
 import storyImage from "../../assests/oven.jpg";
 import CheffImage from "../../assests/cheff-image.png";
 import outlet from "../../assests/story-image.jpg";
-import outlet2 from "../../assests/branch2.jpg"
+import outlet2 from "../../assests/branch2.jpg";
 
 const AboutUs = () => {
   return (
@@ -18,12 +18,11 @@ const AboutUs = () => {
 
         {/* Content */}
         <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
-
           <h1 className="text-4xl text-white font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-24">
             ABOUT
             <span className="text-orange-500"> US</span>
           </h1>
-          <p className="mt-4  text-left text-white md:text-base leading-relaxed ml-24">
+          <p className="mt-4 text-left text-white md:text-base leading-relaxed ml-24">
             HOME/ABOUT US
           </p>
 
@@ -52,7 +51,7 @@ const AboutUs = () => {
               </h2>
             </div>
             {/* Description */}
-            <p className="text-gray-600 leading-relaxed mb-6">
+            <p className="text-gray-600 leading-relaxed mb-6 text-justify">
               Quam ultrices bibendum accumsan morbi risus iaculis tellus tellus
               molestie. Auctor eu auctor aliquam porttitor scelerisque massa
               volutpat elit, urna. Eget quis porta euismod diam justo, tempor
@@ -76,7 +75,7 @@ const AboutUs = () => {
             </h2>
           </div>
           {/* Description */}
-          <p className="text-gray-600 leading-relaxed mb-6">
+          <p className="text-gray-600 leading-relaxed mb-6 text-justify">
             Quam ultrices bibendum accumsan morbi risus iaculis tellus tellus
             molestie. Auctor eu auctor aliquam porttitor scelerisque massa
             volutpat elit, urna. Eget quis porta euismod diam justo, tempor
@@ -162,13 +161,18 @@ const AboutUs = () => {
       <div className="bg-grayscale py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold text-gray-800">
           <span className="text-gray-400">REVIEW</span> <br />
-          <span className="text-black">GET IN <span className="text-orange-500">TOUCH</span></span>
+          <span className="text-black">
+            GET IN <span className="text-orange-500">TOUCH</span>
+          </span>
         </h2>
 
         <form className="mt-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-lg font-bold text-gray-800" htmlFor="name">
+              <label
+                className="block text-lg font-bold text-gray-800"
+                htmlFor="name"
+              >
                 NAME
               </label>
               <input
@@ -179,7 +183,10 @@ const AboutUs = () => {
               />
             </div>
             <div>
-              <label className="block text-lg font-bold text-gray-800" htmlFor="email">
+              <label
+                className="block text-lg font-bold text-gray-800"
+                htmlFor="email"
+              >
                 EMAIL
               </label>
               <input
@@ -190,7 +197,10 @@ const AboutUs = () => {
               />
             </div>
             <div>
-              <label className="block text-lg font-bold text-gray-800" htmlFor="subject">
+              <label
+                className="block text-lg font-bold text-gray-800"
+                htmlFor="subject"
+              >
                 SUBJECT
               </label>
               <input
@@ -202,7 +212,10 @@ const AboutUs = () => {
             </div>
           </div>
           <div>
-            <label className="block text-lg font-bold text-gray-800" htmlFor="message">
+            <label
+              className="block text-lg font-bold text-gray-800"
+              htmlFor="message"
+            >
               MESSAGE
             </label>
             <textarea
