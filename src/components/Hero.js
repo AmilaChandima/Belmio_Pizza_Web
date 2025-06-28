@@ -3,32 +3,29 @@ import { motion } from "framer-motion";
 import heroVideo from "../assests/intro.mp4";
 import { Link } from "react-router-dom";
 
-// Animation variants for individual letters
 const letterVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.01, // Increased delay to 100ms per letter for slower stagger
-      duration: 0.3, // Increased duration to 0.5s for smoother, slower animation
+      delay: i * 0.01,
+      duration: 0.3,
     },
   }),
 };
 
-// Animation variants for the container (to trigger children animations)
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1, // Match the letter delay for consistency
+      staggerChildren: 0.1,
     },
   },
 };
 
 const Hero = () => {
-
   const animateText = (text) => {
     return text.split("").map((char, index) => (
       <motion.span
@@ -39,16 +36,16 @@ const Hero = () => {
         animate="visible"
         className="inline-block"
       >
-        {char === " " ? "\u00A0" : char} {/* Preserve spaces */}
+        {char === " " ? "\u00A0" : char}
       </motion.span>
     ));
   };
 
   return (
     <section className="relative h-screen flex items-center pt-[64px] overflow-hidden">
-      {/* Video Background */}
+      {/* Background Video */}
       <video
-        className="absolute inset-0 w-full h-full object-fill opacity-100 transform scale-125"
+        className="absolute inset-0 w-full h-full object-cover opacity-100 scale-125"
         src={heroVideo}
         autoPlay
         loop
@@ -56,14 +53,14 @@ const Hero = () => {
         playsInline
       />
 
-
       {/* Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-60"></div>
 
       {/* Content */}
-      <div className="relative z-10 text-white px-32 text-left">
+      <div className="relative z-10 text-white px-4 sm:px-8 md:px-16 lg:px-32 text-left w-full max-w-7xl mx-auto">
+        {/* Title */}
         <motion.h2
-          className="text-4xl font-passion md:text-2xl font-extrabold text-white mb-1 tracking-tight"
+          className="text-4xl sm:text-4xl md:text-3xl font-passion font-extrabold mb-1 tracking-tight"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -73,8 +70,9 @@ const Hero = () => {
           <span className="text-white">{animateText(" PIZZA")}</span>
         </motion.h2>
 
+        {/* Subheading */}
         <motion.h2
-          className="text-4xl font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter"
+          className="text-xl sm:text-3xl md:text-5xl font-passion font-extrabold leading-snug mt-2 mb-2 tracking-tighter"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -83,8 +81,9 @@ const Hero = () => {
           <br />
         </motion.h2>
 
+        {/* Highlight Heading */}
         <motion.h2
-          className="text-4xl font-passion md:text-6xl font-extrabold text-white mb-4 tracking-tighter leading-snug"
+          className="text-xl sm:text-3xl md:text-5xl font-passion font-extrabold text-white mb-4 tracking-tighter leading-snug"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -94,8 +93,9 @@ const Hero = () => {
           <span className="text-white">{animateText(" FOODS")}</span>
         </motion.h2>
 
+        {/* Paragraph */}
         <motion.p
-          className="mt-10 text-sm pr-96 text-left md:text-base leading-relaxed"
+          className="mt-6 sm:mt-8 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -105,31 +105,27 @@ const Hero = () => {
           )}
         </motion.p>
 
-        <div className="mt-8">
+        {/* Menu Link */}
+        <div className="mt-6 sm:mt-8">
           <Link
             to="/menu"
-            className="inline-flex items-center font-passion text-xl font-extrabold text-white rounded-lg"
+            className="inline-flex items-center font-passion text-lg sm:text-xl font-extrabold text-white rounded-lg"
           >
             MENU <span className="ml-2">→</span>
           </Link>
         </div>
       </div>
 
-      {/* Slider Indicator */}
-      <div className="absolute bottom-8 right-8 z-20 flex items-center space-x-4">
-        {/* Left Arrow */}
+      {/* Slider Controls */}
+      <div className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 z-20 flex items-center space-x-4">
         <button className="p-2 bg-black bg-opacity-60 rounded-full hover:bg-opacity-80 transition">
           <span className="text-lg text-orange-500">←</span>
         </button>
-
-        {/* Current Slide Indicator */}
         <div className="text-center text-white">
-          <span className="text-lg font-semibold">01</span>
+          <span className="text-sm sm:text-lg font-semibold">01</span>
           <span className="text-sm font-light"> / </span>
-          <span className="text-lg font-semibold">05</span>
+          <span className="text-sm sm:text-lg font-semibold">05</span>
         </div>
-
-        {/* Right Arrow */}
         <button className="p-2 bg-black bg-opacity-60 rounded-full hover:bg-opacity-80 transition">
           <span className="text-lg text-orange-500">→</span>
         </button>
