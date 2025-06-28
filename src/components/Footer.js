@@ -106,22 +106,22 @@ function Footer() {
             <div>
               <h2 className="mb-4 text-sm font-extrabold text-white">Contact Us</h2>
               <ul className="list-disc list-inside space-y-2">
-                <li>
+                
                   <p>
                     Call :{" "}
                     <a href="tel:+94770123166" className="hover:underline">
                       +94770123166
                     </a>
                   </p>
-                </li>
-                <li>
+                
+                
                   <p>
                     Email :{" "}
                     <a href="mailto:belmiopizza@gmail.com" className="hover:underline">
                       belmiopizza@gmail.com
                     </a>
                   </p>
-                </li>
+                
               </ul>
             </div>
           </div>
@@ -131,7 +131,7 @@ function Footer() {
 
         <div className="sm:flex sm:items-center sm:justify-between">
           <span className="text-sm text-gray-400 sm:text-center">
-            ©Copyright 2024{" "}
+            ©Copyright 2025{" "}
             <a href="#" className="hover:underline">
               Belmio Pizza
             </a>
