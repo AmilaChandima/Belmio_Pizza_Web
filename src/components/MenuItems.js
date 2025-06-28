@@ -9,6 +9,7 @@ import { StoreContext } from '../context/StoreContext';
 const MenuItem = ({ item, onDelete }) => {
   const [hovered, setHovered] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [isSizeSelected, setIsSizeSelected] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const { addToCart } = useCart();
@@ -24,15 +25,26 @@ const MenuItem = ({ item, onDelete }) => {
     checkAdmin();
   }, []);
 
-  // Handle add to cart with login check
-  const handleAddToCart = (size) => {
+  // Handle size selection
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+    setIsSizeSelected(true);
+  };
+
+  // Handle add to cart
+  const handleAddToCart = () => {
     if (!token) {
       toast.error('Please login to add items to cart');
       navigate('/login');
       return;
     }
-    setSelectedSize(size);
-    addToCart(item, size);
+    if (!isSizeSelected) {
+      toast.warning('Please select a size first');
+      return;
+    }
+    addToCart(item, selectedSize);
+    setSelectedSize(null);
+    setIsSizeSelected(false);
   };
 
   const handleDelete = async () => {
@@ -102,30 +114,30 @@ const MenuItem = ({ item, onDelete }) => {
 
           <div className="flex justify-center gap-2 mb-14 w-full whitespace-nowrap text-xs">
             <button
-              className={`flex-1 px-4 py-2 rounded ${selectedSize === 'medium'
+              className={`flex-1 px-4 py-2 rounded ${isSizeSelected && selectedSize === 'medium'
                 ? 'bg-orange-500 text-white' : 'bg-black text-white hover:bg-gray-800'}`}
-              onClick={() => handleAddToCart('medium')}
+              onClick={() => handleSizeSelect('medium')}
             >
               MEDIUM
               <br />
-              <span className={selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
+              <span className={isSizeSelected && selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
                 RS. {item.prices.medium}.00
               </span>
             </button>
 
             {item.prices.large && (
               <button
-                className={`flex-1 px-4 py-2 rounded ${selectedSize === 'large'
+                className={`flex-1 px-4 py-2 rounded ${isSizeSelected && selectedSize === 'large'
                     ? 'bg-orange-500 text-white'
                     : 'bg-black text-white hover:bg-gray-800'
                   }`}
-                onClick={() => handleAddToCart('large')}
+                onClick={() => handleSizeSelect('large')}
               >
                 LARGE
                 <br />
                 <span
                   className={
-                    selectedSize === 'large' ? 'text-white' : 'text-orange-500'
+                    isSizeSelected && selectedSize === 'large' ? 'text-white' : 'text-orange-500'
                   }
                 >
                   RS. {item.prices.large}.00
@@ -135,10 +147,15 @@ const MenuItem = ({ item, onDelete }) => {
           </div>
 
           <button
-            className="w-full absolute bottom-0 bg-orange-500 hover:bg-orange-600 text-white py-5 text-sm font-bold"
-            onClick={() => handleAddToCart(selectedSize || 'medium')}
+            className={`w-full absolute bottom-0 px-4 py-3 rounded ${
+              isSizeSelected
+                ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                : 'bg-gray-400 cursor-not-allowed text-gray-600'
+            }`}
+            onClick={handleAddToCart}
+            disabled={!isSizeSelected}
           >
-            ADD TO CART →
+            {isSizeSelected ? 'ADD TO CART →' : 'SELECT SIZE FIRST'}
           </button>
         </div>
       )}
