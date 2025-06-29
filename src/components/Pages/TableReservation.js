@@ -43,7 +43,7 @@ const TableReservation = () => {
     const { date, inTime, outTime } = reservation;
     if (date && inTime && outTime) {
       axios
-        .get('http://localhost:4000/api/reservations', {
+        .get('http://localhost:4000/api/reservations/check', {
           params: { date, inTime, outTime }
         })
         .then(res => setReservedTables(res.data.reservedTables || []))

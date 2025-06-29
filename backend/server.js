@@ -24,7 +24,8 @@ app.use("/api/menu", menuRoutes); // Correctly set up menu routes
 app.use("/api/reviews", reviewRouter); // Correct path for reviews
 //app.use("/api/reservations", reservationRouter); // Add the new reservation route
 app.use("/api/reservations", reservationRouter);
-app.use("/api/foodtruck-reservations", foodTruckRouter); // Food truck reservation route
+app.use("/api/foodtruck-reservations", foodTruckRouter);
+ // Food truck reservation route
 
 app.get("/", (req, res) => {
   res.send("API Working");
