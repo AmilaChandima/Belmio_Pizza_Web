@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FloorPlanImage from "../../assests/FD.png";
-import Truck from "../../assests/FT.png";
+import res from "../../assests/res3.jpg";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -115,11 +115,17 @@ const TableReservation = () => {
   return (
     <>
       {/* Hero Section */}
-      <section
-        className="relative bg-cover bg-center h-[75vh] flex items-center "
-        style={{ backgroundImage: `url(${Truck})` }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+    <section className="relative h-[75vh] flex items-center overflow-hidden">
+      {/* Background image (full opacity) */}
+        <div
+          className="absolute inset-0 bg-center bg-cover"
+          style={{ backgroundImage: `url(${res})` }}
+        ></div>
+
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/50"></div>
+
+        {/* Foreground content */}
         <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
           <h1 className="text-4xl text-white font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-24">
             TABLE <span className="text-orange-500">RESERVATION</span>
