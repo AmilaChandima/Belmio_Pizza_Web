@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import myLogo from "../assests/logo.jpg";
 import { StoreContext } from "../context/StoreContext";
@@ -18,6 +18,9 @@ const Navbar = ({ setShowLogin, setFormType }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     // Check if user is admin when component mounts or token changes
@@ -27,6 +30,17 @@ const Navbar = ({ setShowLogin, setFormType }) => {
     };
     checkAdmin();
   }, [token]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,6 +86,25 @@ const Navbar = ({ setShowLogin, setFormType }) => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
+  const toggleDropdown = (item) => {
+    setOpenDropdown(openDropdown === item ? null : item);
+  };
+
+  const dropdownItems = {
+    'Menu': [
+      { name: 'Pizzas', to: '/menu/pizzas' },
+      { name: 'Sides', to: '/menu/sides' },
+      { name: 'Drinks', to: '/menu/drinks' },
+      { name: 'Desserts', to: '/menu/desserts' }
+    ],
+    'Services': [
+      { name: 'Fast Delivery', to: '/services/fastDelivery' },
+      { name: 'Healthy Foods', to: '/menu' },
+      { name: 'Reservation', to: '/services/table' },
+      { name: 'Food Truck', to: '/services/foodTruck' }
+    ]
+  };
+
   return (
     <div>
       <style dangerouslySetInnerHTML={{ __html: googleFontsLink }} />
@@ -104,7 +137,7 @@ const Navbar = ({ setShowLogin, setFormType }) => {
             </div>
 
             {/* Middle section for desktop nav links */}
-            <div className="hidden md:flex items-center space-x-12">
+            <div className="hidden md:flex items-center space-x-12" ref={dropdownRef}>
               {['Home', 'Menu', 'Services', 'AboutUs'].map((item, index) => (
                 <motion.div
                   key={item}
@@ -112,14 +145,48 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                   initial="hidden"
                   animate={isVisible ? "visible" : "hidden"}
                   variants={linkVariants}
+                  className="relative"
                 >
-                  <Link
-                    to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                    className="text-white text-base md:text-lg font-medium hover:text-orange-200 transition-colors duration-300"
-                  >
-                    {item}
-                    {['Menu', 'Services'].includes(item) && <span className="ml-1">▾</span>}
-                  </Link>
+                  {['Menu', 'Services'].includes(item) ? (
+                    <>
+                      <button
+                        onClick={() => toggleDropdown(item)}
+                        className="text-white text-base md:text-lg font-medium hover:text-orange-400 transition-colors duration-300 flex items-center group"
+                      >
+                        {item}
+                        <span className={`ml-1 transition-all duration-200 transform group-hover:translate-y-0.5 ${openDropdown === item ? 'rotate-180' : ''}`}>▼</span>
+                      </button>
+                      {openDropdown === item && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute left-0 mt-2 w-56 bg-gray-900  border-white  rounded-lg shadow-xl z-50 overflow-hidden"
+                        >
+                          <div className="py-1">
+                            {dropdownItems[item].map((dropdownItem) => (
+                              <Link
+                                key={dropdownItem.name}
+                                to={dropdownItem.to}
+                                className="block px-4 py-3 text-md text-white hover:bg-orange-600 hover:text-white transition-colors duration-200 border-b-2 border-gray-800 last:border-0"
+                                onClick={() => setOpenDropdown(null)}
+                              >
+                                {dropdownItem.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                      className="text-white text-base md:text-lg font-medium hover:text-orange-200 transition-colors duration-300"
+                    >
+                      {item}
+                    </Link>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -241,21 +308,50 @@ const Navbar = ({ setShowLogin, setFormType }) => {
           {isMenuOpen && (
             <div className="md:hidden bg-black px-6 pt-4 pb-6 space-y-4">
               {['Home', 'Menu', 'Services', 'AboutUs'].map((item, index) => (
-                <motion.div
-                  key={item}
-                  custom={index}
-                  initial="hidden"
-                  animate="visible"
-                  variants={linkVariants}
-                >
-                  <Link
-                    to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                    className="block text-white text-base font-medium hover:text-orange-200"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item} {['Menu', 'Services'].includes(item) && <span className="ml-1">▾</span>}
-                  </Link>
-                </motion.div>
+                <div key={item} className="relative">
+                  {['Menu', 'Services'].includes(item) ? (
+                    <>
+                      <button
+                        onClick={() => setOpenMobileDropdown(openMobileDropdown === item ? null : item)}
+                        className="w-full flex items-center justify-between text-white text-base font-medium hover:text-orange-400 py-2 transition-colors duration-200"
+                      >
+                        {item}
+                        <span className={`ml-1 transition-transform duration-200 ${openMobileDropdown === item ? 'transform rotate-180' : ''}`}>▼</span>
+                      </button>
+                      {openMobileDropdown === item && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="ml-4 overflow-hidden"
+                        >
+                          {dropdownItems[item].map((dropdownItem) => (
+                            <Link
+                              key={dropdownItem.name}
+                              to={dropdownItem.to}
+                              className="block py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 px-3 rounded transition-colors duration-200"
+                              onClick={() => {
+                                setIsMenuOpen(false);
+                                setOpenMobileDropdown(null);
+                              }}
+                            >
+                              {dropdownItem.name}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                      className="block text-white text-base font-medium hover:text-orange-400 py-2 transition-colors duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item}
+                    </Link>
+                  )}
+                </div>
               ))}
 
               {isAdmin ? (
