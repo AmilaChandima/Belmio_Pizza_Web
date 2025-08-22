@@ -29,4 +29,17 @@ const createFoodTruckReservation = async (req, res) => {
   }
 };
 
-export { createFoodTruckReservation };
+const getFoodTruckReservations = async (req, res) => {
+  try {
+    const reservations = await FoodTruckReservation.find().sort({ date: -1 });
+    res.status(200).json({ success: true, data: reservations });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch reservations",
+      error: error.message,
+    });
+  }
+};
+
+export { createFoodTruckReservation, getFoodTruckReservations };

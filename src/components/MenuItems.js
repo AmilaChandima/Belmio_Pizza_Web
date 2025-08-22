@@ -15,7 +15,6 @@ const MenuItem = ({ item, onDelete }) => {
   const { token } = useContext(StoreContext);
   const navigate = useNavigate();
 
-  // Check if user is admin
   useEffect(() => {
     const checkAdmin = () => {
       const adminStatus = localStorage.getItem('isAdmin') === 'true';
@@ -24,15 +23,24 @@ const MenuItem = ({ item, onDelete }) => {
     checkAdmin();
   }, []);
 
-  // Handle add to cart with login check
+  // Handle size selection
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+  };
+
+  // Handle add to cart
   const handleAddToCart = (size) => {
     if (!token) {
       toast.error('Please login to add items to cart');
       navigate('/login');
       return;
     }
-    setSelectedSize(size);
+    if (!size) {
+      toast.warning('Please select a size first');
+      return;
+    }
     addToCart(item, size);
+    setSelectedSize(null);
   };
 
   const handleDelete = async () => {
@@ -51,63 +59,66 @@ const MenuItem = ({ item, onDelete }) => {
 
   return (
     <div
-      className="menu-item relative border rounded shadow-md overflow-hidden ml-10 w-64 h-80"
+      className="menu-item relative border rounded shadow-md overflow-hidden w-full h-[20rem] sm:h-[22rem] md:h-[24rem] bg-white"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Edit & Delete Buttons - Only visible for admin */}
+      {/* Admin Buttons */}
       {isAdmin && (
-        <div className="absolute top-1 right-1 flex gap-6 z-10">
+        <div className="absolute top-2 right-2 flex gap-3 z-20">
           <Link
             to={`/edit/${item._id}`}
-            className="text-customBlue hover:text-yellow-500 transition-all"
+            className="text-blue-500 hover:text-yellow-500 transition"
             title="Edit Menu Item"
           >
-            <FiEdit2 size={24} className="hover:scale-110 transition-transform" />
+            <FiEdit2 size={20} />
           </Link>
-
           <button
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-900 transition-all"
+            className="text-red-500 hover:text-red-700 transition"
             title="Delete Menu Item"
           >
-            <FiTrash2 size={24} className="hover:scale-110 transition-transform" />
+            <FiTrash2 size={20} />
           </button>
         </div>
       )}
 
-      {/* Image */}
+      {/* Item Image */}
       <img
         src={item.image}
         alt={item.name}
         className="w-full h-full object-cover"
       />
 
-      {/* Name & Base Info */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black text-white p-3 font-passion">
-        <h3 className="text-lg font-bold text-left">{item.name.toUpperCase()}</h3>
-        <div className="flex justify-between items-center mt-2">
-          <p className="text-sm font-bold">
+      {/* Footer Text */}
+      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 font-passion">
+        <h3 className="text-base font-bold">{item.name.toUpperCase()}</h3>
+        <div className="flex justify-between items-center mt-2 text-sm">
+          <p>
             PRICE - <span className="text-orange-500">RS. {item.prices.medium}.00</span>
           </p>
-          <p className="text-sm font-bold">SIZE - M</p>
+          <p>SIZE - M</p>
         </div>
       </div>
 
       {/* Hover Overlay */}
       {hovered && (
-        <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-between p-4 text-center font-passion font-bold">
-          <h3 className="text-xl font-bold text-white">{item.name.toUpperCase()}</h3>
-          <p className="text-sm text-gray-300 mb-4">{item.description}</p>
+        <div className="absolute inset-0 bg-black bg-opacity-70 z-10 flex flex-col justify-between p-4 text-white">
+          <div>
+            <h3 className="text-lg font-bold text-center mb-2">{item.name.toUpperCase()}</h3>
+            <p className="text-sm text-gray-300 text-center mb-4">{item.description}</p>
+          </div>
 
-          <div className="flex justify-center gap-2 mb-14 w-full whitespace-nowrap text-xs">
+          <div className="flex justify-center gap-2 text-xs">
             <button
-              className={`flex-1 px-4 py-2 rounded ${selectedSize === 'medium'
-                ? 'bg-orange-500 text-white' : 'bg-black text-white hover:bg-gray-800'}`}
-              onClick={() => handleAddToCart('medium')}
+              className={`flex-1 px-3 py-2 rounded text-center ${
+                selectedSize === 'medium'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
+              onClick={() => handleSizeSelect('medium')}
             >
-              MEDIUM
-              <br />
+              MEDIUM <br />
               <span className={selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
                 RS. {item.prices.medium}.00
               </span>
@@ -115,19 +126,15 @@ const MenuItem = ({ item, onDelete }) => {
 
             {item.prices.large && (
               <button
-                className={`flex-1 px-4 py-2 rounded ${selectedSize === 'large'
+                className={`flex-1 px-3 py-2 rounded text-center ${
+                  selectedSize === 'large'
                     ? 'bg-orange-500 text-white'
                     : 'bg-black text-white hover:bg-gray-800'
-                  }`}
-                onClick={() => handleAddToCart('large')}
+                }`}
+                onClick={() => handleSizeSelect('large')}
               >
-                LARGE
-                <br />
-                <span
-                  className={
-                    selectedSize === 'large' ? 'text-white' : 'text-orange-500'
-                  }
-                >
+                LARGE <br />
+                <span className={selectedSize === 'large' ? 'text-white' : 'text-orange-500'}>
                   RS. {item.prices.large}.00
                 </span>
               </button>
@@ -135,10 +142,15 @@ const MenuItem = ({ item, onDelete }) => {
           </div>
 
           <button
-            className="w-full absolute bottom-0 bg-orange-500 hover:bg-orange-600 text-white py-5 text-sm font-bold"
-            onClick={() => handleAddToCart(selectedSize || 'medium')}
+            className={`mt-4 w-full py-2 text-sm font-bold rounded ${
+              selectedSize
+                ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
+                : 'bg-gray-400 cursor-not-allowed text-gray-600'
+            }`}
+            onClick={() => handleAddToCart(selectedSize)}
+            disabled={!selectedSize}
           >
-            ADD TO CART →
+            {selectedSize ? 'ADD TO CART →' : 'SELECT SIZE FIRST'}
           </button>
         </div>
       )}

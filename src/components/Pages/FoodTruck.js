@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Truck from "../../assests/FT.png";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const FoodTruck = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -13,31 +15,26 @@ const FoodTruck = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!selectedDate || !formData.name || !formData.contact || !formData.location) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/foodtruck-reservations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          date: selectedDate.toISOString().split("T")[0],
-          name: formData.name,
-          contact: formData.contact,
-          location: formData.location,
-        }),
+      const res = await axios.post("http://localhost:4000/api/foodtruck-reservations", {
+        date: selectedDate.toISOString().split("T")[0],
+        name: formData.name,
+        contact: formData.contact,
+        location: formData.location,
       });
 
+<<<<<<< HEAD
       const data = await response.json();
 
       
@@ -50,6 +47,13 @@ const FoodTruck = () => {
       }
     } catch (error) {
       alert("Submission failed: " + error.message);
+=======
+      toast.success("Reservation submitted successfully!");
+      setSelectedDate(null);
+      setFormData({ name: "", contact: "", location: "" });
+    } catch (err) {
+      toast.error("Submission failed: " + (err.response?.data?.message || err.message));
+>>>>>>> 793b402a9dd1e6ba77e9d895064ffd758703ff22
     }
   };
 
@@ -57,10 +61,8 @@ const FoodTruck = () => {
     <>
       {/* Hero Section */}
       <section
-        className="relative bg-cover bg-center h-[75vh] flex items-center "
-        style={{
-          backgroundImage: `url(${Truck})`,
-        }}
+        className="relative bg-cover bg-center h-[75vh] flex items-center"
+        style={{ backgroundImage: `url(${Truck})` }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
         <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
@@ -73,8 +75,8 @@ const FoodTruck = () => {
         </div>
       </section>
 
-      {/* Contact Form Section */}
-      <div className="bg-grayscale py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto font-passion font-extrabold ">
+      {/* Form Section */}
+      <div className="bg-grayscale py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto font-passion font-extrabold">
         <h2 className="text-4xl text-gray-800">
           <span className="text-gray-600">FOOD </span>
           <span className="text-black">
@@ -85,9 +87,7 @@ const FoodTruck = () => {
         <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-lg font-extrabold text-gray-800" htmlFor="date">
-                DATE
-              </label>
+              <label className="block text-lg font-extrabold text-gray-800">DATE</label>
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
@@ -98,12 +98,9 @@ const FoodTruck = () => {
             </div>
 
             <div>
-              <label className="block text-lg font-bold text-gray-800" htmlFor="name">
-                NAME
-              </label>
+              <label className="block text-lg font-bold text-gray-800">NAME</label>
               <input
                 type="text"
-                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
@@ -113,12 +110,9 @@ const FoodTruck = () => {
             </div>
 
             <div>
-              <label className="block text-lg font-extrabold text-gray-800" htmlFor="contact">
-                CONTACT NUMBER
-              </label>
+              <label className="block text-lg font-extrabold text-gray-800">CONTACT NUMBER</label>
               <input
                 type="tel"
-                id="contact"
                 name="contact"
                 value={formData.contact}
                 onChange={handleInputChange}
@@ -130,12 +124,9 @@ const FoodTruck = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-lg font-extrabold text-gray-800" htmlFor="location">
-                LOCATION
-              </label>
+              <label className="block text-lg font-extrabold text-gray-800">LOCATION</label>
               <input
                 type="text"
-                id="location"
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}

@@ -45,15 +45,16 @@ function StorySection() {
         >
           {/* Description Paragraphs with Staggered Fade-In */}
           <motion.p
-            className="text-gray-600 leading-relaxed mb-6"
+            className="text-gray-600 leading-relaxed mb-6 text-justify"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             Belmio Pizza, founded in 2016, is a vibrant and beloved pizza restaurant nestled in the heart of Thalawathugoda. Known for its authentic flavors and fresh ingredients, Belmio Pizza has become a go-to destination for pizza lovers seeking a blend of tradition and innovation. With a commitment to quality and customer satisfaction, the restaurant continues to serve delicious, handcrafted pizzas that bring people together, creating memorable dining experiences for families and friends.
           </motion.p>
+
           <motion.p
-            className="text-gray-600 leading-relaxed mb-8"
+            className="text-gray-600 leading-relaxed mb-8 text-justify"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}

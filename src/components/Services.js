@@ -8,22 +8,23 @@ import { Link } from "react-router-dom";
 
 const Services = () => {
   return (
-    <div className="bg-mygray text-center p-8 md:p-16 xl:px-36">
-      {/* Title and Learn More Button with Fade-In Animation */}
+    <div className="bg-mygray text-center px-4 py-8 md:py-16 md:px-16 xl:px-36">
+      {/* Title and Learn More Button */}
       <motion.div 
-        className="flex justify-between mb-8"
+        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
         <motion.h2 
-          className="text-4xl font-passion md:text-4xl font-extrabold text-gray-800 mb-8"
+          className="text-3xl sm:text-4xl font-passion font-extrabold text-gray-800 mt-[-8px] md:mt-[-20px] ml-2 md:ml-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           OUR <span className="text-orange-500">SERVICES</span>
         </motion.h2>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,67 +36,67 @@ const Services = () => {
         </motion.div>
       </motion.div>
 
-      {/* Services with Card Animations */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Service: Fast Delivery */}
+      {/* Services Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Service 1: Fast Delivery */}
         <Link to="/services/fastDelivery">
           <motion.button
-            className="relative w-full h-[360px] border border-gray-300 rounded-md cursor-pointer"
+            className="relative w-full h-[300px] sm:h-[320px] md:h-[360px] border border-gray-300 rounded-md overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0 * 0.2 }}
             whileHover={{ scale: 1.05 }}
           >
-            <img src={delivery} alt="Fast Delivery" className="w-full h-full object-cover rounded-t-md" />
-            <div className="absolute bottom-0 left-0 right-0 text-xl font-passion md: font-extrabold bg-black bg-opacity-50 text-white text-center py-4 rounded-b-md">
+            <img src={delivery} alt="Fast Delivery" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 text-lg sm:text-xl font-passion font-extrabold bg-black bg-opacity-50 text-white py-3 text-center">
               FAST DELIVERY
             </div>
           </motion.button>
         </Link>
-        
-        {/* Service: Healthy Foods */}
+
+        {/* Service 2: Healthy Foods */}
         <Link to="/menu">
           <motion.button
-            className="relative w-full h-[360px] border border-gray-300 rounded-md cursor-pointer"
+            className="relative w-full h-[300px] sm:h-[320px] md:h-[360px] border border-gray-300 rounded-md overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 * 0.2 }}
             whileHover={{ scale: 1.05 }}
           >
-            <img src={food} alt="Healthy Foods" className="w-full h-full object-cover rounded-t-md" />
-            <div className="absolute bottom-0 left-0 right-0 text-xl font-passion md: font-extrabold bg-black bg-opacity-50 text-white text-center py-4 rounded-b-md">
+            <img src={food} alt="Healthy Foods" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 text-lg sm:text-xl font-passion font-extrabold bg-black bg-opacity-50 text-white py-3 text-center">
               HEALTHY FOODS
             </div>
           </motion.button>
         </Link>
-        
-        {/* Service: Reservation */}
+
+        {/* Service 3: Reservation */}
         <Link to="/services/table">
           <motion.button
-            className="relative w-full h-[360px] border border-gray-300 rounded-md cursor-pointer"
+            className="relative w-full h-[300px] sm:h-[320px] md:h-[360px] border border-gray-300 rounded-md overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 2 * 0.2 }}
             whileHover={{ scale: 1.05 }}
           >
-            <img src={reservation} alt="Reservation" className="w-full h-full object-cover rounded-t-md" />
-            <div className="absolute bottom-0 left-0 right-0 text-xl font-passion md: font-extrabold bg-black bg-opacity-50 text-white text-center py-4 rounded-b-md">
+            <img src={reservation} alt="Reservation" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 text-lg sm:text-xl font-passion font-extrabold bg-black bg-opacity-50 text-white py-3 text-center">
               RESERVATION
             </div>
           </motion.button>
         </Link>
-        
-        {/* Service: Food Truck */}
+
+        {/* Service 4: Food Truck */}
         <Link to="/services/foodTruck">
           <motion.button
-            className="relative w-full h-[360px] border border-gray-300 rounded-md cursor-pointer"
+            className="relative w-full h-[300px] sm:h-[320px] md:h-[360px] border border-gray-300 rounded-md overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 3 * 0.2 }}
             whileHover={{ scale: 1.05 }}
           >
-            <img src={truck} alt="Food Truck" className="w-full h-full object-cover rounded-t-md" />
-            <div className="absolute bottom-0 left-0 right-0 text-xl font-passion md: font-extrabold bg-black bg-opacity-50 text-white text-center py-4 rounded-b-md">
+            <img src={truck} alt="Food Truck" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 right-0 text-lg sm:text-xl font-passion font-extrabold bg-black bg-opacity-50 text-white py-3 text-center">
               FOOD TRUCK
             </div>
           </motion.button>
