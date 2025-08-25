@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FloorPlanImage from "../../assests/FD.png";
-import Truck from "../../assests/FT.png";
+import res from "../../assests/res3.jpg";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -115,20 +115,27 @@ const TableReservation = () => {
   return (
     <>
       {/* Hero Section */}
-      <section
-        className="relative bg-cover bg-center h-[75vh] flex items-center "
-        style={{ backgroundImage: `url(${Truck})` }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-5"></div>
-        <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center items-start h-full">
-          <h1 className="text-4xl text-white font-passion text-left md:text-6xl font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-24">
-            TABLE <span className="text-orange-500">RESERVATION</span>
-          </h1>
-          <p className="mt-4 text-left text-white md:text-base leading-relaxed ml-24">
-            HOME / SERVICES / TABLE RESERVATION
-          </p>
-        </div>
-      </section>
+    <section className="relative h-[75vh] flex items-center overflow-hidden">
+  {/* Background image */}
+  <div
+    className="absolute inset-0 bg-center bg-cover"
+    style={{ backgroundImage: `url(${res})` }}
+  ></div>
+
+  {/* Dark overlay */}
+  <div className="absolute inset-0 bg-black/50"></div>
+
+  {/* Foreground content */}
+  <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center h-full">
+    <h1 className="text-3xl sm:text-4xl md:text-6xl text-white font-passion font-extrabold leading-snug mt-2 mb-4 tracking-tighter ml-4 sm:ml-8 md:ml-24">
+      TABLE <span className="text-orange-500">RESERVATION</span>
+    </h1>
+    <p className="mt-2 sm:mt-4 text-white text-sm sm:text-base md:text-base leading-relaxed ml-4 sm:ml-8 md:ml-24">
+      HOME / SERVICES / TABLE RESERVATION
+    </p>
+  </div>
+</section>
+
 
       {/* Floor Plan Section */}
       <div className="max-w-4xl mx-auto mt-10">
@@ -149,7 +156,7 @@ const TableReservation = () => {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
           {/* Table Selection Grid */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-4 gap-4 mb-8 justify-center place-items-center">
             {tableNumbers.map((num) => {
               const isReserved = reservedTables.includes(num);
               const isSelected = reservation.tables.includes(num);
@@ -173,102 +180,107 @@ const TableReservation = () => {
             })}
           </div>
 
-          {/* Reservation Details */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-1 font-medium">Date</label>
-              <input
-                type="date"
-                name="date"
-                value={reservation.date}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-xl"
-                required
-                min={today} // Set the minimum date to today
-              />
-            </div>
+          {/* Row 1: Date, In Time, Out Time */}
+<div className="flex flex-wrap gap-4 mb-4">
+  <div className="flex-1 min-w-[150px]">
+    <label className="block mb-2 text-gray-700 font-medium">Date</label>
+    <input
+      type="date"
+      name="date"
+      value={reservation.date}
+      onChange={handleInputChange}
+      className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 placeholder-gray-400 placeholder-normal"
+      required
+      min={today}
+    />
+  </div>
 
-            <div>
-              <label className="block mb-1 font-medium">In Time</label>
-              <select
-                name="inTime"
-                value={reservation.inTime}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-xl"
-                required
-              >
-                <option value="">Select</option>
-                {timeSlots.map((slot) => (
-                  <option key={slot} value={slot}>{slot}</option>
-                ))}
-              </select>
-            </div>
+  <div className="flex-1 min-w-[150px]">
+    <label className="block mb-2 text-gray-700 font-medium">In Time</label>
+    <select
+      name="inTime"
+      value={reservation.inTime}
+      onChange={handleInputChange}
+      className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 placeholder-gray-400 placeholder-normal"
+      required
+    >
+      <option value="" disabled hidden>Select</option>
+      {timeSlots.map((slot) => (
+        <option key={slot} value={slot}>{slot}</option>
+      ))}
+    </select>
+  </div>
 
-            <div>
-              <label className="block mb-1 font-medium">Out Time</label>
-              <select
-                name="outTime"
-                value={reservation.outTime}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-xl"
-                required
-              >
-                <option value="">Select</option>
-                {timeSlots
-                  .filter(slot => slot > reservation.inTime)
-                  .map((slot) => (
-                    <option key={slot} value={slot}>{slot}</option>
-                  ))}
-              </select>
-            </div>
-          </div>
+  <div className="flex-1 min-w-[150px]">
+    <label className="block mb-2 text-gray-700 font-medium">Out Time</label>
+    <select
+      name="outTime"
+      value={reservation.outTime}
+      onChange={handleInputChange}
+      className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 placeholder-gray-400 placeholder-normal"
+      required
+    >
+      <option value="" disabled hidden>Select</option>
+      {timeSlots.filter(slot => slot > reservation.inTime).map((slot) => (
+        <option key={slot} value={slot}>{slot}</option>
+      ))}
+    </select>
+  </div>
+</div>
 
-          <div>
-            <label className="block mb-1 font-medium">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={reservation.name}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              required
-              placeholder="Customer Name"
-            />
-          </div>
+{/* Row 2: Name, Contact, Head Count */}
+<div className="flex flex-wrap gap-4 mb-6">
+  <div className="flex-1 min-w-[150px]">
+    <label className="block mb-2 text-gray-700 font-medium">Name</label>
+    <input
+      type="text"
+      name="name"
+      value={reservation.name}
+      onChange={handleInputChange}
+      className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 placeholder-gray-400 placeholder-normal"
+      required
+      placeholder="Customer Name"
+    />
+  </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Contact Number</label>
-            <input
-              type="tel"
-              name="contact"
-              value={reservation.contact}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              required
-              placeholder="0779126119"
-            />
-          </div>
+  <div className="flex-1 min-w-[150px]">
+    <label className="block mb-2 text-gray-700 font-medium">Contact Number</label>
+    <input
+      type="tel"
+      name="contact"
+      value={reservation.contact}
+      onChange={handleInputChange}
+      className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 placeholder-gray-400 placeholder-normal"
+      required
+      placeholder="0779126119"
+    />
+  </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Head Count</label>
-            <input
-              type="number"
-              name="headCount"
-              value={reservation.headCount}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              min="1"
-              required
-              placeholder="Number of people"
-            />
-          </div>
+  <div className="flex-1 min-w-[150px]">
+    <label className="block mb-2 text-gray-700 font-medium">Head Count</label>
+    <input
+      type="number"
+      name="headCount"
+      value={reservation.headCount}
+      onChange={handleInputChange}
+      className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 placeholder-gray-400 placeholder-normal"
+      min="1"
+      required
+      placeholder="Number of people"
+    />
+  </div>
+</div>
 
-          <button
-            type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-700 transition"
-          >
-            Book Table{reservation.tables.length > 1 ? 's' : ''}
-          </button>
+{/* Confirm Booking Button */}
+<div className="flex justify-center">
+  <button
+    type="submit"
+    className="bg-orange-500 text-white py-2 px-6 rounded-xl hover:bg-orange-700 transition"
+  >
+    Confirm Booking
+  </button>
+</div>
+
         </form>
       </div>
 
