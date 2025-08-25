@@ -3,7 +3,7 @@ import heroImage from "../../assests/AboutUs.png";
 import storyImage from "../../assests/oven.jpg";
 import CheffImage from "../../assests/cheff-image.png";
 import outlet from "../../assests/story-image.jpg";
-import outlet2 from "../../assests/bel2.jpg";
+import outlet2 from "../../assests/branch2.jpg";
 
 const AboutUs = () => {
   return (
@@ -157,86 +157,82 @@ const AboutUs = () => {
         </div>
       </div>
 
-     {/* Contact Form Section */}
-<div className="bg-grayscale py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
-  <h2 className="text-4xl font-bold text-gray-800">
-   
-    <span className="text-black">
-      Engage With Us <span className="text-orange-500">🤝</span>
-    </span>
-  </h2>
+      {/* Contact Form Section */}
+      <div className="bg-grayscale py-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
+        <h2 className="text-4xl font-bold text-gray-800">
+          <span className="text-gray-400">REVIEW</span> <br />
+          <span className="text-black">
+            GET IN <span className="text-orange-500">TOUCH</span>
+          </span>
+        </h2>
 
-  <form className="mt-8 space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {/* Name */}
-      <div>
-        <label className="block text-lg font-bold text-gray-800" htmlFor="name">
-          NAME
-        </label>
-        <input
-          type="text"
-          id="name"
-          placeholder="Your Name"
-          className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
+        <form className="mt-8 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label
+                className="block text-lg font-bold text-gray-800"
+                htmlFor="name"
+              >
+                NAME
+              </label>
+              <input
+                type="text"
+                id="name"
+                placeholder="AmilaChandima"
+                className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+            <div>
+              <label
+                className="block text-lg font-bold text-gray-800"
+                htmlFor="email"
+              >
+                EMAIL
+              </label>
+              <input
+                type="email"
+                id="email"
+                placeholder="AmilaChandima@gmail.com"
+                className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+            <div>
+              <label
+                className="block text-lg font-bold text-gray-800"
+                htmlFor="subject"
+              >
+                SUBJECT
+              </label>
+              <input
+                type="text"
+                id="subject"
+                placeholder="Enter your subject"
+                className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              className="block text-lg font-bold text-gray-800"
+              htmlFor="message"
+            >
+              MESSAGE
+            </label>
+            <textarea
+              id="message"
+              placeholder="Enter your message here..."
+              rows="5"
+              className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            className="w-full md:w-auto bg-orange-500 text-white font-bold py-3 px-6 rounded hover:bg-orange-600 transition duration-300"
+          >
+            SUBMIT
+          </button>
+        </form>
       </div>
-
-      {/* Email */}
-      <div>
-        <label className="block text-lg font-bold text-gray-800" htmlFor="email">
-          EMAIL
-        </label>
-        <input
-          type="email"
-          id="email"
-          placeholder="you@example.com"
-          className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
-      </div>
-
-      {/* Phone Number */}
-      <div>
-        <label className="block text-lg font-bold text-gray-800" htmlFor="phone">
-          PHONE NUMBER
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          placeholder="077 123 4567"
-          className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
-      </div>
-
-      {/* How did you hear about us */}
-      <div>
-        <label className="block text-lg font-bold text-gray-800" htmlFor="source">
-          HOW DID YOU HEAR ABOUT US?
-        </label>
-        <select
-          id="source"
-          className="mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-        >
-          <option value="">Select an option</option>
-          <option value="friend">Friend</option>
-          <option value="tiktok">TikTok</option>
-          <option value="facebook">Facebook</option>
-          <option value="website">Website</option>
-          <option value="instagram">Instagram</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-    </div>
-
-    <button
-      type="submit"
-      className="w-full md:w-auto bg-orange-500 text-white font-bold py-3 px-6 rounded hover:bg-orange-600 transition duration-300"
-    >
-      SUBMIT
-    </button>
-  </form>
-</div>
-
-     
     </div>
   );
 };
