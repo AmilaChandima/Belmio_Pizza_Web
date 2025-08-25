@@ -1,8 +1,12 @@
 import express from "express";
-import { createFoodTruckReservation } from "../controllers/foodTruckReservationController.js";
+import { createFoodTruckReservation, getFoodTruckReservations } from "../controllers/foodTruckReservationController.js";
 
-const foodTruckRouter = express.Router();
+const router = express.Router();
 
-foodTruckRouter.post("/", createFoodTruckReservation);
+// POST /api/foodtruck-reservations/  => create new reservation
+router.post("/", createFoodTruckReservation);
 
-export default foodTruckRouter;
+// GET /api/foodtruck-reservations/   => fetch all reservations
+router.get("/", getFoodTruckReservations);
+
+export default router;

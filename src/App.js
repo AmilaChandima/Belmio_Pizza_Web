@@ -25,6 +25,12 @@ import EditItem from "./components/AdminDashboard/EditItem";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
+import CheckoutSuccess from "./components/CheckoutSuccess";
+import CheckoutCancel from "./components/CheckoutCancel";
+import OauthSuccess from "./Services/OauthSuccess";
+
+
 
 // Wrapper component to handle loading state with route changes
 const AppWithLoading = () => {
@@ -89,6 +95,10 @@ const AppWithLoading = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/edit/:id" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/success" element={<CheckoutSuccess />} />
+        <Route path="/checkout/cancel" element={<CheckoutCancel />} />
+        <Route path="/oauth-success" element={<OauthSuccess />}/>
         <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
 

@@ -14,17 +14,13 @@ const AddItem = () => {
     name: "",
     category: "Pizza",
     description: "",
-    prices: {
-      medium: "",
-      large: "",
-    },
+    prices: { medium: "", large: "" },
   });
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "medium" || name === "large") {
       setFormData((prev) => ({
         ...prev,
@@ -37,38 +33,37 @@ const AddItem = () => {
 
   const uploadImageToCloudinary = async () => {
     if (!image) return null;
-
     const imageFormData = new FormData();
     imageFormData.append("file", image);
     imageFormData.append("upload_preset", UPLOAD_PRESET);
-
     try {
       const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
         imageFormData
       );
       return response.data.secure_url;
-    } catch (err) {
+    } catch {
       toast.error("Image upload failed.");
       return null;
     }
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) setImage(file);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.name || !formData.description || !formData.prices.medium ) {
+    if (!formData.name || !formData.description || !formData.prices.medium) {
       toast.error("Please fill all the fields.");
       setLoading(false);
       return;
     }
 
     const uploadedImageUrl = await uploadImageToCloudinary();
-
     if (!uploadedImageUrl) {
       toast.error("Image upload failed.");
       setLoading(false);
@@ -95,13 +90,9 @@ const AddItem = () => {
           name: "",
           category: "Pizza",
           description: "",
-          prices: {
-            medium: "",
-            large: "",
-          },
+          prices: { medium: "", large: "" },
         });
         setImage(null);
-
       }
     } catch (error) {
       console.error("Menu Item creation failed:", error);
@@ -113,14 +104,10 @@ const AddItem = () => {
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg p-8 mt-28 rounded-2xl">
-
       <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">
-
-        <span className="text-black">ADD MENU <span className="text-orange-500">ITEM</span></span>
+        ADD MENU <span className="text-orange-500">ITEM</span>
       </h2>
-
       <form onSubmit={handleSubmit} className="space-y-5">
-
         {/* Category */}
         <div>
           <label className="block mb-1 font-medium">Category</label>
@@ -144,7 +131,6 @@ const AddItem = () => {
             <option value="beverages">Beverages</option>
           </select>
         </div>
-
         {/* Item Name */}
         <div>
           <label className="block mb-1 font-medium">Item Name</label>
@@ -158,7 +144,6 @@ const AddItem = () => {
             required
           />
         </div>
-
         {/* Upload Image */}
         <div>
           <label className="block mb-1 font-medium">Upload Image</label>
@@ -168,10 +153,8 @@ const AddItem = () => {
             onChange={handleImageChange}
             className="w-full"
             required
-
           />
         </div>
-
         {image && (
           <img
             src={URL.createObjectURL(image)}
@@ -179,7 +162,6 @@ const AddItem = () => {
             className="w-72 h-72 mt-2 rounded-lg shadow-md"
           />
         )}
-
         {/* Description */}
         <div>
           <label className="block mb-1 font-medium">Description</label>
@@ -193,11 +175,12 @@ const AddItem = () => {
             required
           />
         </div>
-
         {/* Prices */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 font-medium">Medium Size Price (Rs)</label>
+            <label className="block mb-1 font-medium">
+              Medium Size Price (Rs)
+            </label>
             <input
               type="number"
               name="medium"
@@ -210,20 +193,20 @@ const AddItem = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium">Large Size Price (Rs)</label>
+            <label className="block mb-1 font-medium">
+              Large Size Price (Rs)
+            </label>
             <input
               type="number"
               name="large"
               value={formData.prices.large}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="e.g., RS. 2999.00"
+              placeholder="e.g., Rs. 2999.00"
               step="1000"
-              
             />
           </div>
         </div>
-
         {/* Submit Button */}
         <button
           type="submit"
@@ -236,7 +219,6 @@ const AddItem = () => {
             "Add Item"
           )}
         </button>
-
       </form>
     </div>
   );
