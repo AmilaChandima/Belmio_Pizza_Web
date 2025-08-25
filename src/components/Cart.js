@@ -163,7 +163,7 @@ const Cart = () => {
           <p className="text-2xl font-bold text-orange-600">RS. {calculatedTotal.toFixed(2)}</p>
         </div>
         <button
-          onClick={() => toast.info('Checkout functionality coming soon!')}
+          onClick={() => navigate('/checkout')}
           className="w-full px-6 py-3 bg-orange-500 text-white rounded hover:bg-orange-600"
         >
           Proceed to Checkout
