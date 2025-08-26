@@ -39,7 +39,7 @@ passport.use(
     )
 );
 
-// serialize & deserialize (optional if JWT used directly)
+
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
