@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import Slider from "react-slick";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -50,6 +52,25 @@ const ReviewPage = () => {
     comment: "",
     location: "",
   });
+
+  // Pre-fill user data if logged in
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    if (user) {
+      setNewReview(prev => ({
+        ...prev,
+        name: user.name || "",
+      }));
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewReview(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const defaultReviews = [
     {
@@ -131,24 +152,97 @@ const ReviewPage = () => {
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
+    
     try {
+      // Get user data from localStorage (stored as separate items)
+      const userName = localStorage.getItem('name') || '';
+      const userEmail = localStorage.getItem('email');
+      const userProfileImage = localStorage.getItem('profileImage') || '';
+      const token = localStorage.getItem('token');
+      
+      if (!token || !userEmail) {
+        toast.error('Please log in to submit a review');
+        return;
+      }
+      
+      // Basic validation
+      if (!newReview.rating || !newReview.comment) {
+        toast.warning('Please provide both a rating and a comment');
+        return;
+      }
+      
+      // Prepare review data
+      const reviewData = {
+        name: userName || 'Anonymous',
+        email: userEmail,
+        profileImage: userProfileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'User')}`,
+        rating: Number(newReview.rating),
+        comment: newReview.comment,
+        location: newReview.location || 'Not specified',
+      };
+
+      // Show loading state
+      const toastId = toast.loading('Submitting your review...');
+
+      // Make the API request with authorization header
       const response = await axios.post(
         "http://localhost:4000/api/reviews",
-        newReview
+        reviewData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        }
       );
-      const savedReview = {
-        ...response.data.data,
-        review: response.data.data.comment,
-        image: img1,
-      };
-      const updatedReviews = [savedReview, ...reviews];
-      setReviews(updatedReviews);
-      // Update localStorage with the new reviews
-      localStorage.setItem("reviews", JSON.stringify(updatedReviews));
-      setNewReview({ name: "", rating: 0, comment: "", location: "" });
-      setShowReviewForm(false);
+
+      if (response.data && response.data.success) {
+        const savedReview = response.data.data;
+        const updatedReviews = [
+          {
+            ...savedReview,
+            review: savedReview.comment,
+            image: savedReview.profileImage || img1,
+          },
+          ...reviews,
+        ];
+        
+        setReviews(updatedReviews);
+        localStorage.setItem("reviews", JSON.stringify(updatedReviews));
+        setNewReview({ name: "", rating: 0, comment: "", location: "" });
+        
+        // Show success message and close the form
+        toast.update(toastId, {
+          render: 'Thank you for your review!',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        
+        // Close the form after a short delay
+        setTimeout(() => {
+          setShowReviewForm(false);
+        }, 1000);
+        
+      } else {
+        throw new Error(response.data?.message || 'Failed to save review');
+      }
     } catch (error) {
-      console.error("Submission error:", error.response?.data || error.message);
+      console.error('Error submitting review:', error);
+      
+      let errorMessage = 'Failed to submit review. Please try again.';
+      
+      if (error.response) {
+        if (error.response.status === 400) {
+          errorMessage = error.response.data?.message || 'Please provide all required fields';
+        } else if (error.response.status === 401) {
+          errorMessage = 'Please log in to submit a review';
+        } else if (error.response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -197,14 +291,18 @@ const ReviewPage = () => {
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100 opacity-20 rounded-full -mr-12 -mt-12 animate-pulse" />
                 <img
-                  src={review.image}
+                  src={review.profileImage || review.image || img1}
                   alt={review.name}
                   className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-2 object-cover border-4 border-orange-500"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = img1; // Fallback to default image if profile image fails to load
+                  }}
                   loading="lazy"
                 />
                 <div className="text-center mb-2">{renderStars(review.rating)}</div>
                 <p className="text-gray-600 italic text-sm sm:text-base mb-2 line-clamp-4">
-                  "{review.review}"
+                  "{review.review || review.comment}"
                 </p>
                 <p className="font-semibold text-orange-600 text-lg sm:text-lg">
                   {review.name}
@@ -227,14 +325,18 @@ const ReviewPage = () => {
                 >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100 opacity-20 rounded-full -mr-12 -mt-12 animate-pulse" />
                   <img
-                    src={review.image}
+                    src={review.profileImage || review.image || img1}
                     alt={review.name}
                     className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-2 object-cover border-4 border-orange-500"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = img1; // Fallback to default image if profile image fails to load
+                    }}
                     loading="lazy"
                   />
                   <div className="text-center mb-2">{renderStars(review.rating)}</div>
                   <p className="text-gray-600 italic text-sm sm:text-base mb-2 line-clamp-4">
-                    "{review.review}"
+                    "{review.review || review.comment}"
                   </p>
                   <p className="font-semibold text-orange-600 text-lg sm:text-lg">
                     {review.name}
@@ -256,78 +358,73 @@ const ReviewPage = () => {
         </div>
 
         {showReviewForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md">
-              <h3 className="text-2xl font-bold text-orange-600 mb-4">
-                Add Your Review
-              </h3>
-              <form onSubmit={handleSubmitReview} className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  value={newReview.name}
-                  onChange={(e) =>
-                    setNewReview({ ...newReview, name: e.target.value })
-                  }
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-600"
-                  required
-                />
-                <div>
-                  <label className="block text-gray-700 mb-1">Rating:</label>
-                  <div className="flex gap-1">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+              <button
+                onClick={() => setShowReviewForm(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <h2 className="text-2xl font-bold mb-4">Write a Review</h2>
+              <form onSubmit={handleSubmitReview}>
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2" htmlFor="rating">
+                    Rating
+                  </label>
+                  <div className="flex">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <span
+                      <button
                         key={star}
-                        onClick={() => handleStarClick(star)}
-                        className={`cursor-pointer text-2xl ${
-                          star <= newReview.rating
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        }`}
+                        type="button"
+                        className={`text-2xl ${star <= newReview.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                        onClick={() => setNewReview({ ...newReview, rating: star })}
                       >
                         ★
-                      </span>
+                      </button>
                     ))}
                   </div>
                 </div>
-                <textarea
-                  placeholder="Your Comment"
-                  value={newReview.comment}
-                  onChange={(e) =>
-                    setNewReview({ ...newReview, comment: e.target.value })
-                  }
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-600"
-                  rows="4"
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Your Location (optional)"
-                  value={newReview.location}
-                  onChange={(e) =>
-                    setNewReview({ ...newReview, location: e.target.value })
-                  }
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-600"
-                />
-                <div className="flex justify-end gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowReviewForm(false)}
-                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
-                  >
-                    Submit
-                  </button>
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2" htmlFor="comment">
+                    Your Review
+                  </label>
+                  <textarea
+                    id="comment"
+                    name="comment"
+                    rows="4"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    value={newReview.comment}
+                    onChange={handleInputChange}
+                    required
+                  ></textarea>
                 </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2" htmlFor="location">
+                    Location (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    value={newReview.location}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
+                >
+                  Submit Review
+                </button>
               </form>
             </div>
           </div>
         )}
+        <ToastContainer />
       </div>
     </section>
   );
