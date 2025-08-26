@@ -149,7 +149,7 @@ const TableReservation = () => {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
           {/* Table Selection Grid */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-4 gap-4 mb-8 justify-center justify-items-center">
             {tableNumbers.map((num) => {
               const isReserved = reservedTables.includes(num);
               const isSelected = reservation.tables.includes(num);
