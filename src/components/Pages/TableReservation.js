@@ -174,98 +174,100 @@ const TableReservation = () => {
           </div>
 
           {/* Reservation Details */}
-<div className="grid grid-cols-3 gap-4">
-  {/* Row 1: Date, In Time, Out Time */}
-  <div>
-    <label className="block mb-1 font-medium">Date</label>
-    <input
-      type="date"
-      name="date"
-      value={reservation.date}
-      onChange={handleInputChange}
-      className="w-full p-2 border border-gray-300 rounded-xl"
-      required
-      min={today}
-    />
-  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {/* Row 1: Date, In Time, Out Time */}
+            <div>
+              <label className="block mb-1 font-medium">Date</label>
+              <input
+                type="date"
+                name="date"
+                value={reservation.date}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                min={today}
+              />
+            </div>
 
-  <div>
-    <label className="block mb-1 font-medium">In Time</label>
-    <select
-      name="inTime"
-      value={reservation.inTime}
-      onChange={handleInputChange}
-      className="w-full p-2 border border-gray-300 rounded-xl"
-      required
-    >
-      <option value="">Select</option>
-      {timeSlots.map((slot) => (
-        <option key={slot} value={slot}>{slot}</option>
-      ))}
-    </select>
-  </div>
+            <div>
+              <label className="block mb-1 font-medium">In Time</label>
+              <select
+                name="inTime"
+                value={reservation.inTime}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+              >
+                <option value="">Select</option>
+                {timeSlots.map((slot) => (
+                  <option key={slot} value={slot}>{slot}</option>
+                ))}
+              </select>
+            </div>
 
-  <div>
-    <label className="block mb-1 font-medium">Out Time</label>
-    <select
-      name="outTime"
-      value={reservation.outTime}
-      onChange={handleInputChange}
-      className="w-full p-2 border border-gray-300 rounded-xl"
-      required
-    >
-      <option value="">Select</option>
-      {timeSlots
-        .filter(slot => slot > reservation.inTime)
-        .map((slot) => (
-          <option key={slot} value={slot}>{slot}</option>
-        ))}
-    </select>
-  </div>
-</div>
+            <div>
+              <label className="block mb-1 font-medium">Out Time</label>
+              <select
+                name="outTime"
+                value={reservation.outTime}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+              >
+                <option value="">Select</option>
+                {timeSlots
+                  .filter(slot => slot > reservation.inTime)
+                  .map((slot) => (
+                    <option key={slot} value={slot}>{slot}</option>
+                  ))}
+              </select>
+            </div>
+          </div>
 
-{/* Row 2: Name, Contact Number, Head Count */}
-<div className="grid grid-cols-3 gap-4 mt-4">
-  <div>
-    <label className="block mb-1 font-medium">Name</label>
-    <input
-      type="text"
-      name="name"
-      value={reservation.name}
-      onChange={handleInputChange}
-      className="w-full p-2 border border-gray-300 rounded-xl"
-      required
-      placeholder="Customer Name"
-    />
-  </div>
+          {/* Row 2: Name, Contact Number, Head Count */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <div>
+              <label className="block mb-1 font-medium">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={reservation.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                placeholder="Customer Name"
+              />
+            </div>
 
-  <div>
-    <label className="block mb-1 font-medium">Contact Number</label>
-    <input
-      type="tel"
-      name="contact"
-      value={reservation.contact}
-      onChange={handleInputChange}
-      className="w-full p-2 border border-gray-300 rounded-xl"
-      required
-      placeholder="eg:0779126119"
-    />
-  </div>
+            <div>
+              <label className="block mb-1 font-medium">Contact Number</label>
+              <input
+                type="tel"
+                name="contact"
+                value={reservation.contact}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                placeholder="0779126119"
+              />
+            </div>
 
-  <div>
-    <label className="block mb-1 font-medium">Head Count</label>
-    <input
-      type="number"
-      name="headCount"
-      value={reservation.headCount}
-      onChange={handleInputChange}
-      className="w-full p-2 border border-gray-300 rounded-xl"
-      min="1"
-      required
-      placeholder="Number of people"
-    />
-  </div>
-</div>
+            <div>
+              <label className="block mb-1 font-medium">Head Count</label>
+              <input
+                type="number"
+                name="headCount"
+                value={reservation.headCount}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                min="1"
+                step="1"
+                required
+                placeholder="Number of people"
+              />
+            </div>
+          </div>
+
 
 
           <button
