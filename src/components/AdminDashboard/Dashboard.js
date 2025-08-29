@@ -15,25 +15,29 @@ const Dashboard = () => {
   const [reviews, setReviews] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [truckOrders, setTruckOrders] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [ordersRes, reviewsRes, reservationsRes] = await Promise.all([
+        const [ordersRes, reviewsRes, reservationsRes, subscriptionsRes] = await Promise.all([
           axios.get(`${url}/api/foodtruck-reservations`),
           axios.get(`${url}/api/reviews`),
-          axios.get(`${url}/api/reservations`)
+          axios.get(`${url}/api/reservations`),
+          axios.get(`${url}/api/subscriptions`)
         ]);
 
         if (ordersRes.data.success) setTruckOrders(ordersRes.data.data || []);
         if (reviewsRes.data.success) setReviews(reviewsRes.data.data || []);
         if (reservationsRes.data.success) setReservations(reservationsRes.data.data || []);
+        if (subscriptionsRes?.data?.success) setSubscriptions(subscriptionsRes.data.data || []);
       } catch (err) {
         console.error("Dashboard Fetch Error:", err);
         setReviews([]);
         setReservations([]);
         setTruckOrders([]);
+        setSubscriptions([]);
       } finally {
         setLoading(false);
       }
@@ -86,10 +90,11 @@ const Dashboard = () => {
         </motion.h1>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard icon={<FaUsers />} label="Total Reservations" count={reservations.length} />
           <StatCard icon={<FaStar />} label="Total Reviews" count={reviews.length} />
           <StatCard icon={<FaMapMarkerAlt />} label="Food Truck Reservations" count={truckOrders.length} />
+          <StatCard icon={<FaUsers />} label="Subscriptions" count={subscriptions.length} />
         </div>
 
         {/* Sections */}
@@ -166,34 +171,84 @@ const Dashboard = () => {
         </div>
 
         {/* Food Truck Orders */}
-        <SectionCard title="Food Truck Orders" count={truckOrders.length}>
-          {truckOrders.map((order, index) => (
-            <motion.div
-              key={order._id || index}
-              className="bg-white border p-4 rounded-lg shadow hover:shadow-lg transition"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.5 }}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                    <FaUsers className="text-orange-500" /> {order.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
-                    <FaPhone className="text-orange-500" /> {order.contact}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
-                    <FaMapMarkerAlt className="text-orange-500" /> {order.location}
-                  </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <SectionCard title="Food Truck Orders" count={truckOrders.length}>
+            {truckOrders.map((order, index) => (
+              <motion.div
+                key={order._id || index}
+                className="bg-white border p-4 rounded-lg shadow hover:shadow-lg transition"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.5 }}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                      <FaUsers className="text-orange-500" /> {order.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                      <FaPhone className="text-orange-500" /> {order.contact}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-orange-500" /> {order.location}
+                    </p>
+                  </div>
+                  <div className="text-sm text-orange-600 flex items-center gap-2">
+                    <FaCalendarAlt /> {formatDate(order.date)}
+                  </div>
                 </div>
-                <div className="text-sm text-orange-600 flex items-center gap-2">
-                  <FaCalendarAlt /> {formatDate(order.date)}
-                </div>
+              </motion.div>
+            ))}
+          </SectionCard>
+
+          <SectionCard 
+            title={
+              <div className="flex justify-between items-center">
+                <span>Latest Subscriptions</span>
+                <Link 
+                  to="/admin/subscriptions" 
+                  className="px-3 text-sm text-orange-600 hover:underline flex items-center"
+                >
+                  View All <span className="ml-1">→</span>
+                </Link>
               </div>
-            </motion.div>
-          ))}
-        </SectionCard>
+            } 
+            count={subscriptions.length}
+          >
+            {subscriptions.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">No subscriptions yet</p>
+            ) : (
+              subscriptions.slice(0, 3).map((sub, index) => (
+                <motion.div
+                  key={sub._id || index}
+                  className="bg-white border p-4 rounded-lg shadow hover:shadow-lg transition"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.5 }}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold text-gray-800">{sub.name}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{sub.email}</p>
+                      <p className="text-sm text-gray-600">{sub.phone}</p>
+                    </div>
+                    <div className="text-xs text-gray-500 text-right">
+                      <div>{formatDate(sub.createdAt)}</div>
+                      <div className="mt-1">
+                        <Link 
+                          to="/admin/subscriptions" 
+                          className="text-orange-600 hover:underline text-xs"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            )}
+          </SectionCard>
+        </div>
 
         {/* Quick Actions */}
         <div className="mt-12">

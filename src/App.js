@@ -23,6 +23,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import AddItem from "./components/AdminDashboard/AddItem";
 import EditItem from "./components/AdminDashboard/EditItem";
 import Dashboard from "./components/AdminDashboard/Dashboard";
+import Subscriptions from "./components/AdminDashboard/Subscriptions";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
@@ -95,6 +96,7 @@ const AppWithLoading = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/edit/:id" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/admin/subscriptions" element={<ProtectedRoute><Subscriptions /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
