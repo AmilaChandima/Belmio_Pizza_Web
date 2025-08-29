@@ -67,34 +67,6 @@ const AddItem = () => {
       return;
     }
 
-    // Validate prices are positive numbers
-    const mediumPrice = parseFloat(formData.prices.medium);
-    const largePrice = parseFloat(formData.prices.large);
-
-    if (mediumPrice <= 0) {
-      toast.error("Please enter a positive number for medium price!");
-      setLoading(false);
-      return;
-    }
-
-    if (formData.prices.large && largePrice <= 0) {
-      toast.error("Please enter a positive number for large price!");
-      setLoading(false);
-      return;
-    }
-
-    if (isNaN(mediumPrice)) {
-      toast.error("Please enter a valid medium price!");
-      setLoading(false);
-      return;
-    }
-
-    if (formData.prices.large && isNaN(largePrice)) {
-      toast.error("Please enter a valid large price!");
-      setLoading(false);
-      return;
-    }
-
     const uploadedImageUrl = await uploadImageToCloudinary();
 
     if (!uploadedImageUrl) {
@@ -232,9 +204,8 @@ const AddItem = () => {
               value={formData.prices.medium}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="Enter the price of medium portion"
-              step="0.01"
-              min="0.01"
+              placeholder="e.g., Rs. 1499.00"
+              step="1000"
               required
             />
           </div>
@@ -246,9 +217,9 @@ const AddItem = () => {
               value={formData.prices.large}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="Enter the price of large portion"
-              step="0.01"
-              min="0.01"
+              placeholder="e.g., RS. 2999.00"
+              step="1000"
+              
             />
           </div>
         </div>
