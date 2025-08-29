@@ -1,177 +1,113 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+// src/context/CartContext.js
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { StoreContext } from '../context/StoreContext';
 
 const CartContext = createContext();
 
+const readCart = (key) => {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed.items) ? parsed.items : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeCart = (key, items) => {
+  try {
+    const total = items.reduce((s, it) => s + (Number(it.price) * Number(it.quantity)), 0);
+    localStorage.setItem(key, JSON.stringify({ items, totalPrice: total }));
+  } catch {}
+};
+
 export const CartProvider = ({ children }) => {
   const navigate = useNavigate();
   const { token } = useContext(StoreContext);
+
+  // Always use a stable key: user cart when logged in, otherwise guest cart
+  const cartKey = token ? `cart_${token}` : 'cart_guest';
+
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  // Get cart key based on token
-  const cartKey = token ? `cart_${token}` : null;
+  // Hydration guard to prevent overwriting storage with empty state during init/key switch
+  const [hydrated, setHydrated] = useState(false);
+  const prevKeyRef = useRef(cartKey);
 
-  // Check if user is logged in
-  const isLoggedIn = !!token;
-
-  // Load cart from localStorage on mount
+  // Load from localStorage whenever the storage key changes (e.g., login/logout) or on first mount
   useEffect(() => {
-    if (isLoggedIn) {
-      // If user is logged in, load their cart
-      const savedCart = localStorage.getItem(cartKey);
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        setCartItems(parsedCart.items);
-        setTotalPrice(parsedCart.totalPrice);
-      } else {
-        // Initialize empty cart for new user
-        setCartItems([]);
-        setTotalPrice(0);
+    setHydrated(false); // pause saving
+    const items = readCart(cartKey);
+    setCartItems(items);
+    setHydrated(true); // resume saving
+    prevKeyRef.current = cartKey;
+  }, [cartKey]);
+
+  // Recompute total whenever cartItems changes
+  useEffect(() => {
+    const total = cartItems.reduce((s, it) => s + (Number(it.price) * Number(it.quantity)), 0);
+    setTotalPrice(total);
+  }, [cartItems]);
+
+  // Persist to localStorage after hydration only
+  useEffect(() => {
+    if (!hydrated) return;
+    writeCart(cartKey, cartItems);
+  }, [cartItems, cartKey, hydrated]);
+
+  // Optional: keep multiple tabs/windows in sync
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === cartKey) {
+        const items = readCart(cartKey);
+        setCartItems(items);
       }
-    } else {
-      // For non-logged in users, clear cart
-      setCartItems([]);
-      setTotalPrice(0);
-    }
-  }, [isLoggedIn, cartKey]);
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [cartKey]);
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    if (isLoggedIn) {
-      localStorage.setItem(cartKey, JSON.stringify({
-        items: cartItems,
-        totalPrice: totalPrice
-      }));
-    }
-  }, [cartItems, totalPrice, isLoggedIn, cartKey]);
-
+  // -------- Cart actions --------
   const addToCart = (item, size) => {
-    try {
-      if (!isLoggedIn) {
-        throw new Error('Please login to add items to cart');
-      }
+    const price = Number(item?.prices?.[size] ?? item?.price ?? 0);
+    const idx = cartItems.findIndex(ci => ci._id === item._id && ci.size === size);
 
-      // Check if item already exists in cart
-      const existingItemIndex = cartItems.findIndex(
-        cartItem => cartItem._id === item._id && cartItem.size === size
-      );
-
-      if (existingItemIndex >= 0) {
-        // Update quantity if item already exists
-        const updatedCart = [...cartItems];
-        updatedCart[existingItemIndex].quantity += 1;
-        setCartItems(updatedCart);
-      } else {
-        // Add new item to cart
-        const newItem = {
-          ...item,
-          size,
-          quantity: 1,
-          price: item.prices[size]
-        };
-        setCartItems([...cartItems, newItem]);
-      }
-
-      // Update total price
-      const newTotal = cartItems.reduce((sum, cartItem) => 
-        sum + (cartItem.price * cartItem.quantity), 0
-      ) + (item.prices[size] || 0);
-      setTotalPrice(newTotal);
-
-      toast.success(`${item.name} (${size}) added to cart!`, {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } catch (error) {
-      console.error('Error with cart operation:', error);
-      if (error.message.includes('login')) {
-        toast.error(error.message);
-        navigate('/login');
-      } else {
-        toast.error('Failed to perform cart operation. Please try again.');
-      }
+    let updated;
+    if (idx >= 0) {
+      updated = [...cartItems];
+      updated[idx] = { ...updated[idx], quantity: Number(updated[idx].quantity) + 1 };
+    } else {
+      updated = [...cartItems, { ...item, size, quantity: 1, price }];
     }
+    setCartItems(updated);
+    toast.success(`${item.name} (${size}) added to cart!`, { autoClose: 1800 });
   };
 
   const removeFromCart = (itemId, size) => {
-    try {
-      if (!isLoggedIn) {
-        throw new Error('Please login to manage your cart');
-      }
-
-      const updatedCart = cartItems.filter(
-        item => !(item._id === itemId && item.size === size)
-      );
-      setCartItems(updatedCart);
-
-      // Update total price
-      const removedItem = cartItems.find(
-        item => item._id === itemId && item.size === size
-      );
-      if (removedItem) {
-        const newTotal = totalPrice - (removedItem.price * removedItem.quantity);
-        setTotalPrice(newTotal);
-      }
-
-      toast.success('Item removed from cart!');
-    } catch (error) {
-      console.error('Error removing item from cart:', error);
-      toast.error('Failed to remove item from cart. Please try again.');
-    }
+    const updated = cartItems.filter(it => !(it._id === itemId && it.size === size));
+    setCartItems(updated);
+    toast.success('Item removed from cart!', { autoClose: 1500 });
   };
 
   const updateQuantity = (itemId, size, quantity) => {
-    try {
-      if (!isLoggedIn) {
-        throw new Error('Please login to manage your cart');
-      }
-
-      if (quantity < 1) {
-        removeFromCart(itemId, size);
-        return;
-      }
-
-      const updatedCart = cartItems.map(item => 
-        item._id === itemId && item.size === size 
-          ? { ...item, quantity }
-          : item
-      );
-      setCartItems(updatedCart);
-
-      // Update total price
-      const updatedItem = updatedCart.find(
-        item => item._id === itemId && item.size === size
-      );
-      if (updatedItem) {
-        const priceDiff = (updatedItem.price * quantity) - (updatedItem.price * updatedItem.quantity);
-        setTotalPrice(totalPrice + priceDiff);
-      }
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      toast.error('Failed to update quantity. Please try again.');
-    }
+    const q = Number(quantity);
+    if (q < 1) return removeFromCart(itemId, size);
+    const updated = cartItems.map(it =>
+      it._id === itemId && it.size === size ? { ...it, quantity: q } : it
+    );
+    setCartItems(updated);
   };
 
   const clearCart = () => {
-    try {
-      setCartItems([]);
-      setTotalPrice(0);
-      toast.success('Cart cleared!');
-      
-      // Navigate back to home after clearing
-      navigate('/');
-    } catch (error) {
-      console.error('Error clearing cart:', error);
-      toast.error('Failed to clear cart. Please try again.');
-    }
+    setCartItems([]);
+    setTotalPrice(0);
+    localStorage.removeItem(cartKey);
+    toast.success('Cart cleared!');
+    navigate('/');
   };
 
   return (
@@ -181,7 +117,7 @@ export const CartProvider = ({ children }) => {
       addToCart,
       removeFromCart,
       updateQuantity,
-      clearCart
+      clearCart,
     }}>
       {children}
     </CartContext.Provider>
@@ -189,9 +125,7 @@ export const CartProvider = ({ children }) => {
 };
 
 export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error('useCart must be used within a CartProvider');
+  return ctx;
 };
