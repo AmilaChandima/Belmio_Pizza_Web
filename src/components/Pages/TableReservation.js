@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FloorPlanImage from "../../assests/FD.png";
 import Truck from "../../assests/FT.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { StoreContext } from '../../context/StoreContext';
 
 const tableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -28,13 +27,12 @@ const generateTimeSlots = () => {
 const timeSlots = generateTimeSlots();
 
 const TableReservation = () => {
-  const { user, setShowLogin, setFormType } = useContext(StoreContext);
   const [reservation, setReservation] = useState({
     tables: [],
     date: '',
     inTime: '',
     outTime: '',
-    name: user?.name || '',
+    name: '',
     contact: '',
     headCount: '',
   });
@@ -68,21 +66,6 @@ const TableReservation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if user is logged in
-    if (!user) {
-      toast.error('Please login to make a reservation');
-      setFormType('Login');
-      setShowLogin(true);
-      return;
-    }
-
-    // Phone number validation
-    const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
-    if (!phoneRegex.test(reservation.contact)) {
-      toast.error('Please enter a valid phone number (e.g., 0712345678 or +94712345678)');
-      return;
-    }
 
     if (reservation.tables.length === 0) {
       toast.error('Please select at least one table.');
@@ -164,161 +147,136 @@ const TableReservation = () => {
           <span className="text-black">RESERVATION</span>
         </h2>
 
-        {!user ? (
-          <div className="mt-8 p-6 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">
-                  Please <button 
-                    onClick={() => {
-                      setFormType('Login');
-                      setShowLogin(true);
-                    }} 
-                    className="font-medium text-yellow-700 underline hover:text-yellow-600"
-                  >
-                    log in
-                  </button> to make a table reservation.
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
-            {/* Table Selection Grid */}
-            <div className="grid grid-cols-4 gap-4 mb-8 justify-center justify-items-center">
-              {tableNumbers.map((num) => {
-                const isReserved = reservedTables.includes(num);
-                const isSelected = reservation.tables.includes(num);
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6 font-passion">
+          {/* Table Selection Grid */}
+          <div className="grid grid-cols-4 gap-4 mb-8 justify-center justify-items-center">
+            {tableNumbers.map((num) => {
+              const isReserved = reservedTables.includes(num);
+              const isSelected = reservation.tables.includes(num);
 
-                return (
-                  <button
-                    key={num}
-                    type="button"
-                    disabled={isReserved}
-                    onClick={() => toggleTableSelection(num)}
-                    className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
-                        ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                        : isSelected
-                          ? 'bg-orange-500 text-white border-orange-700'
-                          : 'bg-gray-100 hover:bg-gray-200'
-                      }`}
-                  >
-                    {num}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Reservation Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Row 1: Date, In Time, Out Time */}
-              <div>
-                <label className="block mb-1 font-medium">Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  value={reservation.date}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-xl"
-                  required
-                  min={today}
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">In Time</label>
-                <select
-                  name="inTime"
-                  value={reservation.inTime}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-xl"
-                  required
+              return (
+                <button
+                  key={num}
+                  type="button"
+                  disabled={isReserved}
+                  onClick={() => toggleTableSelection(num)}
+                  className={`w-16 h-16 rounded-lg text-lg font-semibold border transition ${isReserved
+                      ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                      : isSelected
+                        ? 'bg-orange-500 text-white border-orange-700'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
                 >
-                  <option value="">Select</option>
-                  {timeSlots.map((slot) => (
+                  {num}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Reservation Details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {/* Row 1: Date, In Time, Out Time */}
+            <div>
+              <label className="block mb-1 font-medium">Date</label>
+              <input
+                type="date"
+                name="date"
+                value={reservation.date}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                min={today}
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">In Time</label>
+              <select
+                name="inTime"
+                value={reservation.inTime}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+              >
+                <option value="">Select</option>
+                {timeSlots.map((slot) => (
+                  <option key={slot} value={slot}>{slot}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">Out Time</label>
+              <select
+                name="outTime"
+                value={reservation.outTime}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+              >
+                <option value="">Select</option>
+                {timeSlots
+                  .filter(slot => slot > reservation.inTime)
+                  .map((slot) => (
                     <option key={slot} value={slot}>{slot}</option>
                   ))}
-                </select>
-              </div>
+              </select>
+            </div>
+          </div>
 
-              <div>
-                <label className="block mb-1 font-medium">Out Time</label>
-                <select
-                  name="outTime"
-                  value={reservation.outTime}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-xl"
-                  required
-                >
-                  <option value="">Select</option>
-                  {timeSlots
-                    .filter(slot => slot > reservation.inTime)
-                    .map((slot) => (
-                      <option key={slot} value={slot}>{slot}</option>
-                    ))}
-                </select>
-              </div>
+          {/* Row 2: Name, Contact Number, Head Count */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <div>
+              <label className="block mb-1 font-medium">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={reservation.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                placeholder="Customer Name"
+              />
             </div>
 
-            {/* Row 2: Name, Contact Number, Head Count */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-              <div>
-                <label className="block mb-1 font-medium">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={reservation.name}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-xl"
-                  required
-                  placeholder="Customer Name"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Contact Number</label>
-                <input
-                  type="tel"
-                  name="contact"
-                  value={reservation.contact}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-xl"
-                  required
-                  placeholder="0779126119"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Head Count</label>
-                <input
-                  type="number"
-                  name="headCount"
-                  value={reservation.headCount}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-xl"
-                  min="1"
-                  step="1"
-                  required
-                  placeholder="Number of people"
-                />
-              </div>
+            <div>
+              <label className="block mb-1 font-medium">Contact Number</label>
+              <input
+                type="tel"
+                name="contact"
+                value={reservation.contact}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                placeholder="0779126119"
+              />
             </div>
 
+            <div>
+              <label className="block mb-1 font-medium">Head Count</label>
+              <input
+                type="number"
+                name="headCount"
+                value={reservation.headCount}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                min="1"
+                step="1"
+                required
+                placeholder="Number of people"
+              />
+            </div>
+          </div>
 
 
-            <button
-              type="submit"
-              className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-700 transition"
-            >
-              Book Table{reservation.tables.length > 1 ? 's' : ''}
-            </button>
-          </form>
-        )}
+
+          <button
+            type="submit"
+            className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-700 transition"
+          >
+            Book Table{reservation.tables.length > 1 ? 's' : ''}
+          </button>
+        </form>
       </div>
 
 

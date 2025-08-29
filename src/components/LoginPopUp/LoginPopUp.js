@@ -8,14 +8,6 @@ function LoginPopUp({ setShowLogin, formType, setFormType }) {
   const { url, setToken, setUser } = useContext(StoreContext);
   const navigate = useNavigate();
 
-  // Add/remove modal-open class when component mounts/unmounts
-  useEffect(() => {
-    document.body.classList.add('modal-open');
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, []);
-
   const [data, setData] = useState({
     name: "",
     email: "",
