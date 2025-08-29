@@ -13,7 +13,7 @@ import { handleStripeWebhook } from "./controllers/webhookController.js";
 import passport from "./config/passport.js";
 import session from "express-session";
 import subscriptionRouter from "./routes/subscriptionRoutes.js";
-
+import orderRoutes from "./routes/orderRoute.js";
 
 // App config
 const app = express();
@@ -61,7 +61,7 @@ app.use("/api/reservations", reservationRouter);
 app.use("/api/foodtruck-reservations", foodTruckRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/subscriptions", subscriptionRouter);
-
+app.use("/api/orders", orderRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

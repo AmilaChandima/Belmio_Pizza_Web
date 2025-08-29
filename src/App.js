@@ -30,7 +30,7 @@ import Checkout from "./components/Checkout";
 import CheckoutSuccess from "./components/CheckoutSuccess";
 import CheckoutCancel from "./components/CheckoutCancel";
 import OauthSuccess from "./Services/OauthSuccess";
-
+import OrderSuccess from "./components/OrderSuccess.js";
 
 
 // Wrapper component to handle loading state with route changes
@@ -101,6 +101,8 @@ const AppWithLoading = () => {
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
         <Route path="/oauth-success" element={<OauthSuccess />}/>
+        <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+
         <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
 
