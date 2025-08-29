@@ -8,7 +8,7 @@ import t3 from "../../assests/t3.jpg";
 import t4 from "../../assests/t4.jpg";
 import t5 from "../../assests/t5.jpg";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
 
 const FoodTruck = () => {
@@ -28,7 +28,24 @@ const FoodTruck = () => {
     e.preventDefault();
 
     if (!selectedDate || !formData.name || !formData.contact || !formData.location) {
-      toast.error("Please fill in all fields.");
+      toast.error("Please fill in all fields.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: {
+          background: '#FF5252',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }
+      });
       return;
     }
 
@@ -40,16 +57,52 @@ const FoodTruck = () => {
         location: formData.location,
       });
 
-      toast.success("Reservation submitted successfully!");
+      toast.success("Reservation submitted successfully!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: {
+          background: '#4CAF50',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }
+      });
+      
       setSelectedDate(null);
       setFormData({ name: "", contact: "", location: "" });
     } catch (err) {
-      toast.error("Submission failed: " + (err.response?.data?.message || err.message));
+      toast.error("Submission failed: " + (err.response?.data?.message || err.message), {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: {
+          background: '#FF5252',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }
+      });
     }
   };
 
   return (
     <>
+      <ToastContainer position="top-center" autoClose={3000} />
       {/* Hero Section */}
       <section
         className="relative bg-cover bg-center h-[75vh] flex items-center"
@@ -110,6 +163,7 @@ const FoodTruck = () => {
                 onChange={(date) => setSelectedDate(date)}
                 dateFormat="yyyy MMMM dd"
                 placeholderText="Select a date"
+                minDate={new Date()}
                 className="bg-mygray font-bold mt-2 w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>

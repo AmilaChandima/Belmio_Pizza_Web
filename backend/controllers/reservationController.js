@@ -1,9 +1,10 @@
 // controllers/reservationController.js
 import Reservation from "../models/ReservationModel.js"
+import { sendAdminNotification } from "../utils/smsHelper.js";
 
 export const createReservation = async (req, res) => {
   try {
-    const { date, inTime, outTime, tables } = req.body;
+    const { date, inTime, outTime, tables, name, email, contact } = req.body;
 
     // Check if any of the selected tables are already reserved in the given time range
     const overlappingReservations = await Reservation.find({
@@ -22,6 +23,11 @@ export const createReservation = async (req, res) => {
 
     const newReservation = new Reservation(req.body);
     await newReservation.save();
+    
+    // Send SMS notification to admin
+    const message = `New Table Reservation!\nName: ${name}\nDate: ${new Date(date).toLocaleDateString()}\nTime: ${inTime} - ${outTime}\nTables: ${tables.join(', ')}\nContact: ${contact}${email ? '\nEmail: ' + email : ''}`;
+    await sendAdminNotification(message);
+    
     res.status(201).json({ message: "Reservation successful" });
   } catch (err) {
     console.error(err);

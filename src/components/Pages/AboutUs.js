@@ -22,6 +22,32 @@ const scaleIn = (delay = 0) => ({
   viewport: { once: true, amount: 0.2 },
 });
 
+const galleryItem = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: (i) => ({
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }),
+  hover: {
+    scale: 1.03,
+    transition: { duration: 0.3 }
+  }
+};
+
+const galleryImages = [
+  { id: 1, src: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&auto=format&fit=crop" },
+  { id: 2, src: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=500&auto=format&fit=crop" },
+  { id: 3, src: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&auto=format&fit=crop" },
+  { id: 4, src: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop" },
+  { id: 5, src: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&fit=crop" },
+  { id: 6, src: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=500&auto=format&fit=crop" },
+];
+
 const AboutUs = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -147,6 +173,69 @@ const AboutUs = () => {
                 <p className="text-gray-600">Trusted by thousands of happy customers</p>
               </div>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-screen-xl mx-auto px-6 md:px-12 lg:px-20">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              OUR <span className="text-orange-500">GALLERY</span>
+            </h2>
+            <div className="w-20 h-1 bg-orange-500 mx-auto mb-6"></div>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Take a look at some memorable moments from our journey
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {galleryImages.map((image, index) => (
+              <motion.div
+                key={image.id}
+                className="group relative overflow-hidden rounded-lg shadow-lg cursor-pointer"
+                variants={galleryItem}
+                initial="hidden"
+                whileInView="visible"
+                whileHover="hover"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <img
+                  src={image.src}
+                  alt={`Gallery ${image.id}`}
+                  className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div className="text-white">
+                    <h3 className="font-semibold text-lg">Pizza {image.id}</h3>
+                    <p className="text-sm opacity-90">Delicious creation</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <motion.div 
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <button 
+              className="px-8 py-3 bg-orange-500 text-white font-semibold rounded-full hover:bg-orange-600 transition-colors duration-300 shadow-lg hover:shadow-xl"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              Back to Top
+            </button>
           </motion.div>
         </div>
       </section>
