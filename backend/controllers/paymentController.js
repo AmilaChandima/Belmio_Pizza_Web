@@ -36,8 +36,8 @@ export const createCheckoutSession = async (req, res) => {
       line_items,
       customer_email: customerEmail,
       success_url:
-        "http://localhost:3000/checkout/success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:3000/checkout/cancel",
+        `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
       metadata: { source: "belmio-demo" },
     });
 

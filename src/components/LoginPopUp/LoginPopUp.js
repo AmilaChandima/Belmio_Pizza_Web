@@ -218,7 +218,7 @@ function LoginPopUp({ setShowLogin, formType, setFormType }) {
             <button
                 type="button"
                 onClick={() => {
-                  window.location.href = "http://localhost:4000/api/user/google";
+                  window.location.href = `${process.env.REACT_APP_API_URL}/api/user/google`;
                   // 👆 replace with your backend URL if deployed
                 }}
                 className="w-full mt-2 mb-6 flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg py-2 px-4 shadow-sm hover:bg-gray-100 transition"

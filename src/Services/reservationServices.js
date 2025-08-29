@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = "http://localhost:4000/api/reservations"; // Base URL for the API
+const apiUrl = `${process.env.REACT_APP_API_URL}/api/reservations`; // Base URL for the API
 
 // Get reserved tables for a given date and time slot range
 const getReservedTables = async (date, inSlot, outSlot) => {
