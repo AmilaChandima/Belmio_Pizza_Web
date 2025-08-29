@@ -34,13 +34,29 @@ const Navbar = ({ setShowLogin, setFormType }) => {
 
   useEffect(() => {
     if (user?.profileImage) {
+      // Ensure the image URL is properly formatted
+      let imgUrl = user.profileImage;
+      if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+        imgUrl = imgUrl.startsWith('//') ? `https:${imgUrl}` : imgUrl;
+      }
+      
       // Save to state and localStorage
-      setProfileImage(user.profileImage);
-      localStorage.setItem("profileImage", user.profileImage);
+      setProfileImage(imgUrl);
+      localStorage.setItem("profileImage", imgUrl);
     } else {
       // Fallback to whatever is in localStorage
       const saved = localStorage.getItem("profileImage");
-      if (saved) setProfileImage(saved);
+      if (saved) {
+        let imgUrl = saved;
+        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+          imgUrl = imgUrl.startsWith('//') ? `https:${imgUrl}` : imgUrl;
+          localStorage.setItem("profileImage", imgUrl);
+        }
+        setProfileImage(imgUrl);
+      } else {
+        // Default profile image if none exists
+        setProfileImage("default-profile.png");
+      }
     }
   }, [user]);
 
