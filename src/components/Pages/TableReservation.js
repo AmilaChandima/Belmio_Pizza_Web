@@ -67,6 +67,13 @@ const TableReservation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Phone number validation
+    const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
+    if (!phoneRegex.test(reservation.contact)) {
+      toast.error('Please enter a valid phone number (e.g., 0712345678 or +94712345678)');
+      return;
+    }
+
     if (reservation.tables.length === 0) {
       toast.error('Please select at least one table.');
       return;
