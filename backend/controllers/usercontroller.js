@@ -22,7 +22,13 @@ const loginUser = async (req, res, next) => {
 
     const token = createToken(user._id);
 
-    res.status(200).json({ success: true, token, isAdmin: user.isAdmin });
+    res.status(200).json({ 
+      success: true, 
+      token, 
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin 
+    });
 
   } catch (error) {
     console.error(error);  
