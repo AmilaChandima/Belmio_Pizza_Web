@@ -5,7 +5,8 @@ import { StoreContext } from '../../context/StoreContext';
 import { motion } from 'framer-motion';
 import {
   FaStar, FaCalendarAlt, FaUtensils, FaUsers,
-  FaClock, FaPhone, FaMapMarkerAlt
+  FaClock, FaPhone, FaMapMarkerAlt, FaShoppingCart,
+  FaCreditCard, FaMoneyBill
 } from 'react-icons/fa';
 
 import dashboardBanner from '../../assests/AboutUs.png'; // replace with actual dashboard banner image
@@ -15,28 +16,32 @@ const Dashboard = () => {
   const [reviews, setReviews] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [truckOrders, setTruckOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [ordersRes, reviewsRes, reservationsRes, subscriptionsRes] = await Promise.all([
+        const [truckOrdersRes, reviewsRes, reservationsRes, regularOrdersRes, subscriptionsRes] = await Promise.all([
           axios.get(`${url}/api/foodtruck-reservations`),
           axios.get(`${url}/api/reviews`),
           axios.get(`${url}/api/reservations`),
+          axios.get(`${url}/api/orders`),
           axios.get(`${url}/api/subscriptions`)
         ]);
 
-        if (ordersRes.data.success) setTruckOrders(ordersRes.data.data || []);
+        if (truckOrdersRes.data.success) setTruckOrders(truckOrdersRes.data.data || []);
         if (reviewsRes.data.success) setReviews(reviewsRes.data.data || []);
         if (reservationsRes.data.success) setReservations(reservationsRes.data.data || []);
+        if (regularOrdersRes.data) setOrders(regularOrdersRes.data || []);
         if (subscriptionsRes?.data?.success) setSubscriptions(subscriptionsRes.data.data || []);
       } catch (err) {
         console.error("Dashboard Fetch Error:", err);
         setReviews([]);
         setReservations([]);
         setTruckOrders([]);
+        setOrders([]);
         setSubscriptions([]);
       } finally {
         setLoading(false);
@@ -93,8 +98,23 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard icon={<FaUsers />} label="Total Reservations" count={reservations.length} />
           <StatCard icon={<FaStar />} label="Total Reviews" count={reviews.length} />
+          <StatCard icon={<FaShoppingCart />} label="Total Orders" count={orders.length} />
           <StatCard icon={<FaMapMarkerAlt />} label="Food Truck Reservations" count={truckOrders.length} />
+        </div>
+
+        {/* Additional Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           <StatCard icon={<FaUsers />} label="Subscriptions" count={subscriptions.length} />
+          <StatCard 
+            icon={<FaCreditCard />} 
+            label="Paid Orders" 
+            count={orders.filter(order => order.paymentStatus === 'paid').length} 
+          />
+          <StatCard 
+            icon={<FaClock />} 
+            label="Pending Orders" 
+            count={orders.filter(order => order.deliveryStatus !== 'delivered').length} 
+          />
         </div>
 
         {/* Sections */}
@@ -170,8 +190,67 @@ const Dashboard = () => {
           </SectionCard>
         </div>
 
-        {/* Food Truck Orders */}
+        {/* Orders and Food Truck Orders */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <SectionCard title="Latest Orders" count={orders.length}>
+            {orders.slice(0, 5).map((order, index) => (
+              <motion.div
+                key={order._id || index}
+                className="bg-white border p-4 rounded-lg shadow hover:shadow-lg transition"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.5 }}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                      <FaShoppingCart className="text-orange-500" /> {order.email}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                      <FaPhone className="text-orange-500" /> {order.phone}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-orange-500" /> {order.address}
+                    </p>
+                  </div>
+                  <div className="text-sm text-right">
+                    <div className="flex items-center justify-end gap-2 text-orange-600 font-medium mb-1">
+                      <FaCalendarAlt /> {formatDate(order.createdAt)}
+                    </div>
+                    <div className="flex items-center justify-end gap-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        order.deliveryStatus === 'delivered' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {order.deliveryStatus === 'delivered' ? 'Delivered' : 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-between items-center">
+                  <div className="flex items-center gap-2 text-sm">
+                    {order.paymentMethod === 'card' ? (
+                      <FaCreditCard className="text-green-500" />
+                    ) : (
+                      <FaMoneyBill className="text-yellow-600" />
+                    )}
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                      order.paymentStatus === 'paid' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {order.paymentStatus}
+                    </span>
+                  </div>
+                  <div className="text-sm font-bold text-gray-800">
+                    RS.{order.totalPrice?.toFixed(2)}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </SectionCard>
+
           <SectionCard title="Food Truck Orders" count={truckOrders.length}>
             {truckOrders.map((order, index) => (
               <motion.div
