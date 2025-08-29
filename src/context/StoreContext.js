@@ -13,14 +13,9 @@ const StoreContextProvider = (props) => {
     const savedImage = localStorage.getItem("profileImage");
     const savedIsAdmin = localStorage.getItem("isAdmin") === "true";
 
-    return savedName || savedEmail 
-      ? { 
-          name: savedName || "", 
-          email: savedEmail || "", 
-          profileImage: savedImage || "default-profile.png", 
-          isAdmin: savedIsAdmin 
-        }
-      : null;
+    return savedName && savedEmail
+        ? { name: savedName, email: savedEmail, profileImage: savedImage, isAdmin: savedIsAdmin }
+        : null;
   });
 
   useEffect(() => {
