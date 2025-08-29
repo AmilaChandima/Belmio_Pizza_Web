@@ -174,7 +174,8 @@ const TableReservation = () => {
           </div>
 
           {/* Reservation Details */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {/* Row 1: Date, In Time, Out Time */}
             <div>
               <label className="block mb-1 font-medium">Date</label>
               <input
@@ -184,7 +185,7 @@ const TableReservation = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-xl"
                 required
-                min={today} // Set the minimum date to today
+                min={today}
               />
             </div>
 
@@ -223,45 +224,51 @@ const TableReservation = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={reservation.name}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              required
-              placeholder="Customer Name"
-            />
+          {/* Row 2: Name, Contact Number, Head Count */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <div>
+              <label className="block mb-1 font-medium">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={reservation.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                placeholder="Customer Name"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">Contact Number</label>
+              <input
+                type="tel"
+                name="contact"
+                value={reservation.contact}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                required
+                placeholder="0779126119"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium">Head Count</label>
+              <input
+                type="number"
+                name="headCount"
+                value={reservation.headCount}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded-xl"
+                min="1"
+                step="1"
+                required
+                placeholder="Number of people"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Contact Number</label>
-            <input
-              type="tel"
-              name="contact"
-              value={reservation.contact}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              required
-              placeholder="0779126119"
-            />
-          </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Head Count</label>
-            <input
-              type="number"
-              name="headCount"
-              value={reservation.headCount}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              min="1"
-              required
-              placeholder="Number of people"
-            />
-          </div>
 
           <button
             type="submit"
