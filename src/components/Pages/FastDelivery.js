@@ -1,6 +1,7 @@
 import React from "react";
 import Deli from "../../assests/FDD.png";
 import Delivery from "../../assests/4.jpg";
+import { Link } from "react-router-dom";
 
 const FastDelivery = () => {
   return (
@@ -54,12 +55,12 @@ const FastDelivery = () => {
 
             {/* Learn More Button */}
             <div className="mt-4 self-start">
-              <a
-                href="#learn-more"
+              <Link
+                to="/menu"
                 className="px-5 py-3 bg-orange-500 text-white font-semibold rounded hover:bg-orange-600 transition"
               >
                 VIEW OUR PRODUCT
-              </a>
+              </Link>
             </div>
           </div>
         </div>
