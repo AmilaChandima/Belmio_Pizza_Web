@@ -6,18 +6,15 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
-
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const Checkout = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState(""); // from Google Maps input or text
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
 
   const saveOrder = async (paymentMethod, paymentStatus = "pending") => {
     try {
@@ -49,12 +46,15 @@ const Checkout = () => {
       const order = await saveOrder("card", "pending");
       if (!order) return;
 
-      // Call backend to create Stripe checkout session
+      // Create Stripe checkout session with orderId
       const { data } = await axios.post(
         "http://localhost:4000/api/payments/create-checkout-session",
         {
           customerEmail: email,
-          orderId: order._id, // link Stripe session to order
+          phone,
+          address,
+          totalPrice,
+          orderId: order._id,
           items: cartItems.map((ci) => ({
             name: ci.name,
             size: ci.size,
@@ -83,16 +83,13 @@ const Checkout = () => {
     try {
       if (!cartItems.length) return toast.error("Your cart is empty.");
       if (!email || !phone || !address) return toast.error("Fill all details.");
-  
+
       setLoading(true);
-  
-      // Save order first
+
       const order = await saveOrder("cod", "pending");
       if (order) {
         toast.success("Order placed! Pay cash on delivery.");
-        clearCart(); // clear cart here, before navigation is fine too
-  
-        // Navigate using order ID
+        clearCart();
         navigate(`/order-success/${order._id}`);
       }
     } catch (e) {
@@ -102,8 +99,6 @@ const Checkout = () => {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <div className="max-w-3xl mx-auto p-6">
