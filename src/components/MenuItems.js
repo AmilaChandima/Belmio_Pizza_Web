@@ -30,17 +30,24 @@ const MenuItem = ({ item, onDelete }) => {
 
   // Handle add to cart
   const handleAddToCart = (size) => {
-    if (!token) {
-      toast.error('Please login to add items to cart');
-      navigate('/login');
-      return;
+    try {
+      if (!token) {
+        toast.error('Please login to add items to cart');
+        navigate('/login');
+        return;
+      }
+      if (!size) {
+        toast.warning('Please select a size first');
+        return;
+      }
+      // Show toast first to ensure it appears
+     // console.log(`${item.name} (${size}) added to cart!`);
+      addToCart(item, size);
+      setSelectedSize(null);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error('Failed to add item to cart');
     }
-    if (!size) {
-      toast.warning('Please select a size first');
-      return;
-    }
-    addToCart(item, size);
-    setSelectedSize(null);
   };
 
   const handleDelete = async () => {

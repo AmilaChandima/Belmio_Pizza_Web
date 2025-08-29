@@ -81,7 +81,15 @@ export const CartProvider = ({ children }) => {
       ) + (item.prices[size] || 0);
       setTotalPrice(newTotal);
 
-      toast.success('Item added to cart!');
+      toast.success(`${item.name} (${size}) added to cart!`, {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
       console.error('Error with cart operation:', error);
       if (error.message.includes('login')) {
