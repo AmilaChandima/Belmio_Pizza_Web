@@ -40,26 +40,36 @@ function LoginPopUp({ setShowLogin, formType, setFormType }) {
       if (response.data.success) {
         // Save token, profile image, name, email, and admin status to localStorage
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem(
+            "profileImage",
+            response.data.profileImage && response.data.profileImage !== ""
+                ? response.data.profileImage
+                : "default-profile.png"
+        );
         localStorage.setItem("name", response.data.name || "");
         localStorage.setItem("email", response.data.email || "");
-        localStorage.setItem("isAdmin", response.data.isAdmin || false);
+        localStorage.setItem("isAdmin", response.data.isAdmin);
 
         // Update context
         setToken(response.data.token);
         setUser({
           name: response.data.name || "",
           email: response.data.email || "",
-          profileImage: response.data.profileImage || "default-profile.png",
-          isAdmin: response.data.isAdmin || false,
+          profileImage:
+              response.data.profileImage && response.data.profileImage !== ""
+                  ? response.data.profileImage
+                  : "default-profile.png",
+          isAdmin: response.data.isAdmin,
         });
 
         // Close login popup
         setShowLogin(false);
 
-        // Redirect based on user role
+        // Redirect admin users to dashboard
         if (response.data.isAdmin) {
           navigate("/admin/dashboard");
         } else {
+          // Optionally navigate regular users somewhere
           navigate("/");
         }
       } else {
