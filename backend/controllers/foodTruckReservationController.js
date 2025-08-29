@@ -1,4 +1,5 @@
 import FoodTruckReservation from "../models/foodTruckReservationModel.js";
+import { sendAdminNotification } from "../utils/smsHelper.js";
 
 const createFoodTruckReservation = async (req, res) => {
   const { date, name, contact, location } = req.body;
@@ -19,8 +20,14 @@ const createFoodTruckReservation = async (req, res) => {
     });
 
     const savedReservation = await newReservation.save();
+    
+    // Send SMS notification
+    const message = `New Food Truck Booking!\nName: ${name}\nDate: ${new Date(date).toLocaleDateString()}\nContact: ${contact}\nLocation: ${location}`;
+    await sendAdminNotification(message);
+    
     res.status(201).json({ success: true, reservation: savedReservation });
   } catch (error) {
+    console.error("Reservation error:", error);
     res.status(500).json({
       success: false,
       message: "Failed to create reservation",
