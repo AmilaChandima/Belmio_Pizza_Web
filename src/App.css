@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+/* Prevent body from scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
