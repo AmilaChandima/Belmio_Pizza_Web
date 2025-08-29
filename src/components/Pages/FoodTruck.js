@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Truck from "../../assests/FT.png";
+import t1 from "../../assests/t1.jpg";
+import t2 from "../../assests/t2.jpg";
+import t3 from "../../assests/t3.jpg";
+import t4 from "../../assests/t4.jpg";
+import t5 from "../../assests/t5.jpg";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 const FoodTruck = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -27,7 +33,7 @@ const FoodTruck = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:4000/api/foodtruck-reservations", {
+      await axios.post("http://localhost:4000/api/foodtruck-reservations", {
         date: selectedDate.toISOString().split("T")[0],
         name: formData.name,
         contact: formData.contact,
@@ -57,6 +63,32 @@ const FoodTruck = () => {
           <p className="mt-4 text-left text-white md:text-base leading-relaxed ml-24">
             HOME / SERVICES / FOOD TRUCK
           </p>
+        </div>
+      </section>
+
+      {/* Animated Image Gallery */}
+      <section className="py-12 bg-gray-50">
+        <h2 className="text-center text-3xl font-extrabold mb-8 font-passion text-gray-800">
+          OUR <span className="text-orange-500">FOOD TRUCK</span>
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 px-8 max-w-7xl mx-auto">
+          {[t1, t2, t3, t4, t5].map((img, i) => (
+            <motion.div
+              key={i}
+              className="overflow-hidden rounded-2xl shadow-lg bg-white"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.2 }}
+              whileHover={{ scale: 1.05, rotate: 1 }}
+            >
+              <img
+                src={img}
+                alt={`Food Truck ${i + 1}`}
+                className="w-full h-64 object-cover rounded-2xl"
+              />
+            </motion.div>
+          ))}
         </div>
       </section>
 
