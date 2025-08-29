@@ -49,6 +49,30 @@ const FoodTruck = () => {
       return;
     }
 
+    // Phone number validation
+    const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
+    if (!phoneRegex.test(formData.contact)) {
+      toast.error('Please enter a valid phone number (e.g., 0712345678 or +94712345678)', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: {
+          background: '#FF5252',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }
+      });
+      return;
+    }
+
     try {
       await axios.post("http://localhost:4000/api/foodtruck-reservations", {
         date: selectedDate.toISOString().split("T")[0],
