@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/", newOrder);       // Create order
 router.get("/", listOrders);      // Get all orders
-router.put("/:orderId/pay", markOrderPaid); // Mark order as paid
+router.patch("/:orderId/paid", markOrderPaid); // Mark order as paid
 router.get("/:orderId", getOrderById);
 
 export default router;

@@ -31,7 +31,7 @@ import CheckoutSuccess from "./components/CheckoutSuccess";
 import CheckoutCancel from "./components/CheckoutCancel";
 import OauthSuccess from "./Services/OauthSuccess";
 import OrderSuccess from "./components/OrderSuccess.js";
-
+import Orders from "./components/AdminDashboard/order";
 
 // Wrapper component to handle loading state with route changes
 const AppWithLoading = () => {
@@ -97,6 +97,7 @@ const AppWithLoading = () => {
         <Route path="/edit/:id" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/admin/subscriptions" element={<ProtectedRoute><Subscriptions /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />

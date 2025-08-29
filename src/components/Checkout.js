@@ -22,10 +22,10 @@ const Checkout = () => {
         email,
         phone,
         address,
-        items: cartItems,
+        items: cartItems,       // ← store full cart
         totalPrice,
         paymentMethod,
-        paymentStatus,
+        paymentStatus           // ← "paid" for card
       });
       return res.data;
     } catch (err) {
@@ -34,71 +34,57 @@ const Checkout = () => {
       return null;
     }
   };
-
+  
   const handleCardPay = async () => {
-    try {
-      if (!cartItems.length) return toast.error("Your cart is empty.");
-      if (!email || !phone || !address) return toast.error("Fill all details.");
-
-      setLoading(true);
-
-      // Save order first as "pending"
-      const order = await saveOrder("card", "pending");
-      if (!order) return;
-
-      // Create Stripe checkout session with orderId
-      const { data } = await axios.post(
-        "http://localhost:4000/api/payments/create-checkout-session",
-        {
-          customerEmail: email,
-          phone,
-          address,
-          totalPrice,
-          orderId: order._id,
-          items: cartItems.map((ci) => ({
-            name: ci.name,
-            size: ci.size,
-            price: ci.price,
-            quantity: ci.quantity,
-          })),
-        }
-      );
-
-      if (data.id) {
-        const stripe = await stripePromise;
-        const { error } = await stripe.redirectToCheckout({ sessionId: data.id });
-        if (error) toast.error(error.message);
-      } else if (data.url) {
-        window.location.href = data.url;
+    if (!cartItems.length) return toast.error("Your cart is empty.");
+    if (!email || !phone || !address) return toast.error("Fill all details.");
+  
+    setLoading(true);
+  
+    const order = await saveOrder("card", "paid");  // ← mark as paid
+    if (!order) return;
+  
+    const { data } = await axios.post(
+      "http://localhost:4000/api/payments/create-checkout-session",
+      {
+        customerEmail: email,
+        orderId: order._id,
+        items: cartItems.map(ci => ({
+          name: ci.name,
+          size: ci.size,
+          price: ci.price,
+          quantity: ci.quantity
+        }))
       }
-    } catch (e) {
-      console.error(e);
-      toast.error("Card checkout failed.");
-    } finally {
-      setLoading(false);
+    );
+  
+    if (data.id) {
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({ sessionId: data.id });
+      if (error) toast.error(error.message);
+    } else if (data.url) {
+      window.location.href = data.url;
     }
+  
+    setLoading(false);
   };
-
+  
   const handleCOD = async () => {
-    try {
-      if (!cartItems.length) return toast.error("Your cart is empty.");
-      if (!email || !phone || !address) return toast.error("Fill all details.");
-
-      setLoading(true);
-
-      const order = await saveOrder("cod", "pending");
-      if (order) {
-        toast.success("Order placed! Pay cash on delivery.");
-        clearCart();
-        navigate(`/order-success/${order._id}`);
-      }
-    } catch (e) {
-      console.error(e);
-      toast.error("COD checkout failed.");
-    } finally {
-      setLoading(false);
+    if (!cartItems.length) return toast.error("Your cart is empty.");
+    if (!email || !phone || !address) return toast.error("Fill all details.");
+  
+    setLoading(true);
+  
+    const order = await saveOrder("cod", "pending");  // COD is pending
+    if (order) {
+      toast.success("Order placed! Pay cash on delivery.");
+      clearCart();
+      navigate(`/order-success/${order._id}`);
     }
+  
+    setLoading(false);
   };
+  
 
   return (
     <div className="max-w-3xl mx-auto p-6">

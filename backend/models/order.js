@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const OrderSchema = new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
   {
     email: { type: String, required: true },
     phone: { type: String, required: true },
@@ -15,9 +15,9 @@ const OrderSchema = new mongoose.Schema(
     ],
     totalPrice: { type: Number, required: true },
     paymentMethod: { type: String, enum: ["card", "cod"], required: true },
-    paymentStatus: { type: String, enum: ["pending", "paid"], default: "pending" },
+    paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Order", OrderSchema);
+export default mongoose.model("Order", orderSchema);
