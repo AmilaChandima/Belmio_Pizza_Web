@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import heroImage from "../../assests/AboutUs.png";
 import storyImage from "../../assests/oven.jpg";
 import CheffImage from "../../assests/cheff-image.png";
 import outlet from "../../assests/story-image.jpg";
 import outlet2 from "../../assests/branch2.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -21,6 +23,50 @@ const scaleIn = (delay = 0) => ({
 });
 
 const AboutUs = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: ""
+  });
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch("http://localhost:4000/api/subscriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      toast.success("Thank you for subscribing!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setFormData({ name: "", email: "", phone: "", address: "" });
+    } else {
+      toast.error(data.message || "Something went wrong", {
+       position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  } catch (error) {
+    toast.error("Error submitting form", {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
+    });
+  }
+};
+
   return (
     <div className="bg-white text-gray-800">
       {/* Hero */}
@@ -31,10 +77,7 @@ const AboutUs = () => {
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/10" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto px-6 md:px-12 lg:px-20">
-          <motion.div
-            {...fadeUp(0)}
-            className="max-w-3xl"
-          >
+          <motion.div {...fadeUp(0)} className="max-w-3xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
               ABOUT <span className="text-orange-500">US</span>
             </h1>
@@ -50,10 +93,9 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Story (styled like your sample) */}
+      {/* Story */}
       <section className="py-16 bg-white">
         <div className="max-w-screen-xl mx-auto px-6 md:px-12 lg:px-20 flex flex-col lg:flex-row gap-8">
-          {/* Left with animated heading + image */}
           <motion.div className="lg:w-1/2 mr-0 lg:mr-4" {...scaleIn(0.15)}>
             <motion.h2
               className="text-4xl font-passion md:text-4xl font-extrabold text-gray-800 mb-8"
@@ -75,31 +117,21 @@ const AboutUs = () => {
             />
           </motion.div>
 
-          {/* Right with staggered paragraphs + stats */}
           <motion.div className="lg:w-1/2 flex flex-col justify-start lg:ml-5" {...fadeUp(0.1)}>
-            <motion.p
-              className="text-gray-600 leading-relaxed mb-6 text-justify"
-              {...fadeUp(0.25)}
-            >
+            <motion.p className="text-gray-600 leading-relaxed mb-6 text-justify" {...fadeUp(0.25)}>
               Belmio Pizza, founded in 2016, is a vibrant and beloved pizza restaurant nestled in
               the heart of Thalawathugoda. Known for authentic flavors and fresh ingredients, we’ve
               become a go-to destination for pizza lovers seeking a blend of tradition and
               innovation—crafting memorable dining experiences for families and friends.
             </motion.p>
 
-            <motion.p
-              className="text-gray-600 leading-relaxed mb-8 text-justify"
-              {...fadeUp(0.35)}
-            >
+            <motion.p className="text-gray-600 leading-relaxed mb-8 text-justify" {...fadeUp(0.35)}>
               We’re expanding our reach by embracing technology—launching our first e-commerce
               platform to make online ordering and promotions more accessible to our growing
               community.
             </motion.p>
 
-            <motion.div
-              className="flex gap-8 mb-4 md:mb-8 justify-start"
-              {...fadeUp(0.45)}
-            >
+            <motion.div className="flex gap-8 mb-4 md:mb-8 justify-start" {...fadeUp(0.45)}>
               <div>
                 <h3 className="text-xl font-bold text-gray-800">
                   SINCE <span className="text-blue-600">2016</span>
@@ -207,74 +239,79 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Contact */}
+      {/* Engage With Us */}
       <section className="py-16">
         <div className="max-w-screen-xl mx-auto px-6 md:px-12 lg:px-20">
-          <motion.h2 className="text-3xl md:text-4xl font-bold" {...fadeUp(0)}>
-            <span className="text-gray-400">REVIEW</span> <br />
-            <span className="text-black">
-              GET IN <span className="text-orange-500">TOUCH</span>
-            </span>
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold flex items-center gap-2"
+            {...fadeUp(0)}
+          >
+            <span className="text-orange-500">📩</span> ENGAGE WITH US
           </motion.h2>
 
-          <motion.form className="mt-8 space-y-6" aria-label="Contact form" {...fadeUp(0.1)}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <motion.form
+            className="mt-8 space-y-6"
+            aria-label="Engage With Us form"
+            {...fadeUp(0.1)}
+            onSubmit={handleSubmit}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <motion.div {...fadeUp(0.15)}>
-                <label className="block text-sm font-semibold" htmlFor="name">
-                  NAME
-                </label>
+                <label className="block text-sm font-semibold" htmlFor="name">NAME</label>
                 <input
                   type="text"
                   id="name"
                   name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="Amila Chandima"
-                  autoComplete="name"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </motion.div>
+
               <motion.div {...fadeUp(0.2)}>
-                <label className="block text-sm font-semibold" htmlFor="email">
-                  EMAIL
-                </label>
+                <label className="block text-sm font-semibold" htmlFor="email">EMAIL</label>
                 <input
                   type="email"
                   id="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="amilachandima@gmail.com"
-                  autoComplete="email"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </motion.div>
+
               <motion.div {...fadeUp(0.25)}>
-                <label className="block text-sm font-semibold" htmlFor="subject">
-                  SUBJECT
-                </label>
+                <label className="block text-sm font-semibold" htmlFor="phone">PHONE</label>
                 <input
                   type="text"
-                  id="subject"
-                  name="subject"
-                  placeholder="Enter your subject"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="077 123 4567"
+                  required
+                  className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </motion.div>
+
+              <motion.div {...fadeUp(0.3)}>
+                <label className="block text-sm font-semibold" htmlFor="address">ADDRESS</label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Colombo, Sri Lanka"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </motion.div>
             </div>
-
-            <motion.div {...fadeUp(0.3)}>
-              <label className="block text-sm font-semibold" htmlFor="message">
-                MESSAGE
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                placeholder="Enter your message here..."
-                rows="5"
-                required
-                className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </motion.div>
 
             <motion.button
               type="submit"
@@ -282,9 +319,10 @@ const AboutUs = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
-              SUBMIT
+              SUBSCRIBE
             </motion.button>
           </motion.form>
+          <ToastContainer />
         </div>
       </section>
     </div>

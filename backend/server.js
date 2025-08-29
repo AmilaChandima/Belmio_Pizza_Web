@@ -12,6 +12,8 @@ import paymentRouter from "./routes/paymentRoute.js";
 import { handleStripeWebhook } from "./controllers/webhookController.js";
 import passport from "./config/passport.js";
 import session from "express-session";
+import subscriptionRouter from "./routes/subscriptionRoutes.js";
+
 
 // App config
 const app = express();
@@ -58,6 +60,8 @@ app.use("/api/reviews", reviewRouter);
 app.use("/api/reservations", reservationRouter);
 app.use("/api/foodtruck-reservations", foodTruckRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/subscriptions", subscriptionRouter);
+
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -87,3 +91,5 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+
