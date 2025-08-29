@@ -46,4 +46,31 @@ const getSubscriptions = async (req, res) => {
   }
 };
 
-export { createSubscription, getSubscriptions };
+// Delete a subscription
+const deleteSubscription = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const subscription = await subscriptionModel.findByIdAndDelete(id);
+
+    if (!subscription) {
+      return res.status(404).json({
+        success: false,
+        message: "Subscription not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Subscription deleted successfully",
+      data: subscription,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting subscription",
+      error: error.message,
+    });
+  }
+};
+
+export { createSubscription, getSubscriptions, deleteSubscription };

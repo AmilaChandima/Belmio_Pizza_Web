@@ -34,13 +34,29 @@ const Navbar = ({ setShowLogin, setFormType }) => {
 
   useEffect(() => {
     if (user?.profileImage) {
+      // Ensure the image URL is properly formatted
+      let imgUrl = user.profileImage;
+      if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+        imgUrl = imgUrl.startsWith('//') ? `https:${imgUrl}` : imgUrl;
+      }
+      
       // Save to state and localStorage
-      setProfileImage(user.profileImage);
-      localStorage.setItem("profileImage", user.profileImage);
+      setProfileImage(imgUrl);
+      localStorage.setItem("profileImage", imgUrl);
     } else {
       // Fallback to whatever is in localStorage
       const saved = localStorage.getItem("profileImage");
-      if (saved) setProfileImage(saved);
+      if (saved) {
+        let imgUrl = saved;
+        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+          imgUrl = imgUrl.startsWith('//') ? `https:${imgUrl}` : imgUrl;
+          localStorage.setItem("profileImage", imgUrl);
+        }
+        setProfileImage(imgUrl);
+      } else {
+        // Default profile image if none exists
+        setProfileImage("default-profile.png");
+      }
     }
   }, [user]);
 
@@ -131,6 +147,25 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                   </Link>
                 </motion.div>
               ))}
+              
+              {/* Admin Dashboard Button */}
+              {isAdmin && (
+                <motion.div
+                  initial="hidden"
+                  animate={isVisible ? "visible" : "hidden"}
+                  variants={linkVariants}
+                >
+                  <Link
+                    to="/admin/dashboard"
+                    className="flex items-center gap-1 text-white text-base md:text-lg font-medium hover:text-orange-200 transition-colors duration-300"
+                  >
+                    <span>Dashboard</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </Link>
+                </motion.div>
+              )}
             </div>
 
             {/* Right: Cart + Auth / Profile */}
