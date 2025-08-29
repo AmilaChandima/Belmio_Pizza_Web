@@ -12,18 +12,29 @@ function OauthSuccess() {
         const token = params.get("token");
         const name = params.get("name");
         const email = params.get("email");
-        const image = decodeURIComponent(params.get("profileImage"));
+        const image = decodeURIComponent(params.get("profileImage") || "");
         const isAdmin = params.get("isAdmin") === "true";
 
         if (token) {
+            // Process the image URL - ensure it's a full URL and not null/undefined
+            let processedImage = image;
+            if (image && !image.startsWith('http')) {
+                processedImage = image.startsWith('//') ? `https:${image}` : image;
+            }
+
             localStorage.setItem("token", token);
             localStorage.setItem("name", name);
             localStorage.setItem("email", email);
-            localStorage.setItem("profileImage", image);
+            localStorage.setItem("profileImage", processedImage);
             localStorage.setItem("isAdmin", isAdmin);
 
             setToken(token);
-            setUser({ name, email, profileImage: image, isAdmin });
+            setUser({ 
+                name, 
+                email, 
+                profileImage: processedImage, 
+                isAdmin 
+            });
 
             navigate("/");
         }
