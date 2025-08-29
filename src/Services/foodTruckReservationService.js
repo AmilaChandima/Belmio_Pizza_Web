@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:4000/api";
+const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
 const path = "/foodtruck"; // Match your router path (adjust if different)
 
 export const foodTruckReservationService = {

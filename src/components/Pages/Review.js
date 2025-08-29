@@ -109,7 +109,7 @@ const ReviewPage = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/reviews");
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/reviews`);
         const apiReviews = response.data.data.map((review) => ({
           ...review,
           review: review.comment,
@@ -186,7 +186,7 @@ const ReviewPage = () => {
 
       // Make the API request with authorization header
       const response = await axios.post(
-        "http://localhost:4000/api/reviews",
+        `${process.env.REACT_APP_API_URL}/api/reviews`,
         reviewData,
         {
           headers: {

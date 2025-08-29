@@ -50,7 +50,7 @@ const FoodTruck = () => {
     }
 
     try {
-      await axios.post("http://localhost:4000/api/foodtruck-reservations", {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/foodtruck-reservations`, {
         date: selectedDate.toISOString().split("T")[0],
         name: formData.name,
         contact: formData.contact,
