@@ -248,10 +248,7 @@ const AboutUs = () => {
               OUR <span className="text-orange-500">CHEF</span>
             </h2>
             <p className="mt-6 text-gray-600 leading-7 text-justify">
-              Quam ultrices bibendum accumsan morbi risus iaculis tellus tellus molestie. Auctor eu
-              auctor aliquam porttitor scelerisque massa volutpat elit, urna. Eget quis porta
-              euismod diam justo, tempor vehicula. Egestas turpis vel non diam nunc amet, a risus
-              diam. Ultrices ac blandit sem nec nulla nisi habitasse.
+              Our kitchen is led by a passionate chef who brings both tradition and creativity to every dish. With years of experience perfecting authentic Italian flavors, our chef carefully selects the finest ingredients to craft pizzas that are rich in taste and full of character. From hand-kneaded dough to signature sauces and toppings, every step is guided by skill, love, and attention to detail. Belmio’s chef believes that great pizza is more than just food—it’s an experience meant to be shared with family and friends.
             </p>
           </motion.div>
 
