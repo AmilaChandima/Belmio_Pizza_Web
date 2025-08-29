@@ -71,7 +71,7 @@ function StorySection() {
           >
             <div>
               <h3 className="text-xl font-bold text-gray-800">
-                SINCE <span className="text-blue-600">2015</span>
+                SINCE <span className="text-blue-600">2016</span>
               </h3>
               <p className="text-gray-600">
                 Serving quality, tradition, and unforgettable flavors with every slice
