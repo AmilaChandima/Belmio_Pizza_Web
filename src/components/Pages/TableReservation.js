@@ -45,7 +45,7 @@ const TableReservation = () => {
     const { date, inTime, outTime } = reservation;
     if (date && inTime && outTime) {
       axios
-        .get('http://localhost:4000/api/reservations/check', {
+        .get(`${process.env.REACT_APP_API_URL}/api/reservations/check`, {
           params: { date, inTime, outTime }
         })
         .then(res => setReservedTables(res.data.reservedTables || []))
@@ -103,7 +103,7 @@ const TableReservation = () => {
     const updatedReservation = { ...reservation, tables: availableTables };
 
     try {
-      const res = await axios.post('http://localhost:4000/api/reservations', updatedReservation);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/reservations`, updatedReservation);
 
       if (res.status === 201) {
         toast.success('Table(s) successfully reserved!');

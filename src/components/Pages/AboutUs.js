@@ -64,7 +64,7 @@ const AboutUs = () => {
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Phone number validation
     const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
     if (!phoneRegex.test(formData.phone)) {
@@ -90,7 +90,7 @@ const AboutUs = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/subscriptions", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/subscriptions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -119,7 +119,44 @@ const AboutUs = () => {
         });
         setFormData({ name: "", email: "", phone: "", address: "" });
       } else {
-        toast.error(data.message || "Something went wrong", {
+        throw new Error(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      // Fallback to localhost if environment URL fails
+      try {
+        const res = await fetch("http://localhost:4000/api/subscriptions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          toast.success("Thank you for subscribing!", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            style: {
+              background: '#4CAF50',
+              color: '#fff',
+              fontWeight: 'bold',
+              borderRadius: '8px',
+              padding: '12px 20px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }
+          });
+          setFormData({ name: "", email: "", phone: "", address: "" });
+        } else {
+          throw new Error(data.message || "Something went wrong");
+        }
+      } catch (err) {
+        toast.error("Error submitting form", {
           position: "top-center",
           autoClose: 3000,
           hideProgressBar: false,
@@ -138,25 +175,6 @@ const AboutUs = () => {
           }
         });
       }
-    } catch (error) {
-      toast.error("Error submitting form", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        style: {
-          background: '#FF5252',
-          color: '#fff',
-          fontWeight: 'bold',
-          borderRadius: '8px',
-          padding: '12px 20px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-        }
-      });
     }
   };
 
@@ -214,12 +232,12 @@ const AboutUs = () => {
             <motion.p className="text-gray-600 leading-relaxed mb-6 text-justify" {...fadeUp(0.25)}>
               Belmio Pizza, founded in 2016, is a vibrant and beloved pizza restaurant nestled in
               the heart of Thalawathugoda. Known for authentic flavors and fresh ingredients, we’ve
-              become a go-to destination for pizza lovers seeking a blend of tradition and
-              innovation—crafting memorable dining experiences for families and friends.
+              become a go to destination for pizza lovers seeking a blend of tradition and
+              innovation crafting memorable dining experiences for families and friends.
             </motion.p>
 
             <motion.p className="text-gray-600 leading-relaxed mb-8 text-justify" {...fadeUp(0.35)}>
-              We’re expanding our reach by embracing technology—launching our first e-commerce
+              We’re expanding our reach by embracing technology launching our first e-commerce
               platform to make online ordering and promotions more accessible to our growing
               community.
             </motion.p>
@@ -315,10 +333,13 @@ const AboutUs = () => {
               OUR <span className="text-orange-500">CHEF</span>
             </h2>
             <p className="mt-6 text-gray-600 leading-7 text-justify">
-              Quam ultrices bibendum accumsan morbi risus iaculis tellus tellus molestie. Auctor eu
-              auctor aliquam porttitor scelerisque massa volutpat elit, urna. Eget quis porta
-              euismod diam justo, tempor vehicula. Egestas turpis vel non diam nunc amet, a risus
-              diam. Ultrices ac blandit sem nec nulla nisi habitasse.
+              Our kitchen is led by a passionate chef who brings both tradition 
+              and creativity to every dish. With years of experience perfecting authentic Italian flavors, 
+              our chef carefully selects the finest ingredients to craft pizzas that are rich in taste and full of character
+            </p>
+            <p className="mt-6 text-gray-600 leading-7 text-justify">
+              From hand kneaded dough to signature sauces and toppings, every step is guided by skill, love, and attention to detail. 
+              Belmio’s chef believes that great pizza is more than just food it’s an experience meant to be shared with family and friends.
             </p>
           </motion.div>
 
@@ -360,9 +381,9 @@ const AboutUs = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                <p className="text-xl md:text-2xl font-bold">123/AB, ATHULKOTTE, COLOMBO</p>
+                <p className="text-xl md:text-2xl font-bold">ATHULKOTTE, COLOMBO</p>
                 <p className="mt-1 md:mt-2 text-lg md:text-2xl font-semibold">
-                  CALL NOW – <span className="text-orange-500 font-bold">077 123 4567</span>
+                  CALL NOW – <span className="text-orange-500 font-bold">077 012 3166</span>
                 </p>
               </div>
             </motion.a>
@@ -385,9 +406,9 @@ const AboutUs = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                <p className="text-xl md:text-2xl font-bold">456/CD, THALAWATHOGODA, COLOMBO</p>
+                <p className="text-xl md:text-2xl font-bold">THALAWATHOGODA, COLOMBO</p>
                 <p className="mt-1 md:mt-2 text-lg md:text-2xl font-semibold">
-                  CALL NOW – <span className="text-orange-500 font-bold">077 123 4567</span>
+                  CALL NOW – <span className="text-orange-500 font-bold">077 012 3166</span>
                 </p>
               </div>
             </motion.a>
