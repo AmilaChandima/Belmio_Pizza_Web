@@ -26,8 +26,18 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-// Middleware
+// Apply express.json() and other middleware AFTER the webhook handler
 app.use(cors(corsOptions));
+
+// Webhook endpoint must come before any other body parsers
+app.post(
+  "/webhooks/stripe",
+  // Raw body parser for webhooks
+  express.raw({ type: 'application/json' }),
+  handleStripeWebhook
+);
+
+// Regular body parsers for other routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -49,9 +59,6 @@ connectDB();
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Webhook endpoint (must come before other body parsers)
-app.post("/webhooks/stripe", express.raw({ type: "application/json" }), handleStripeWebhook);
 
 // API Routes
 app.use("/api/user", userRouter);
@@ -91,5 +98,3 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-
