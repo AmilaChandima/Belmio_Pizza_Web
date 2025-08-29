@@ -23,10 +23,12 @@ const MenuItem = ({ item, onDelete }) => {
     checkAdmin();
   }, []);
 
+  // Handle size selection
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
   };
 
+  // Handle add to cart
   const handleAddToCart = (size) => {
     try {
       if (!token) {
@@ -38,6 +40,8 @@ const MenuItem = ({ item, onDelete }) => {
         toast.warning('Please select a size first');
         return;
       }
+      // Show toast first to ensure it appears
+     // console.log(`${item.name} (${size}) added to cart!`);
       addToCart(item, size);
       setSelectedSize(null);
     } catch (error) {
@@ -62,109 +66,94 @@ const MenuItem = ({ item, onDelete }) => {
 
   return (
     <div
-      className="menu-item relative border rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden 
-                 transition-all duration-300 transform hover:-translate-y-2 bg-white"
+      className="menu-item relative border rounded shadow-md overflow-hidden w-full h-[20rem] sm:h-[22rem] md:h-[24rem] bg-white"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Admin Controls */}
+      {/* Admin Buttons */}
       {isAdmin && (
-        <div className="absolute top-3 right-3 flex gap-3 z-20">
+        <div className="absolute top-2 right-2 flex gap-3 z-20">
           <Link
             to={`/edit/${item._id}`}
-            className="bg-white/70 p-2 rounded-full shadow hover:scale-110 transition"
+            className="text-blue-500 hover:text-yellow-500 transition"
             title="Edit Menu Item"
           >
-            <FiEdit2 size={18} className="text-blue-500" />
+            <FiEdit2 size={20} />
           </Link>
           <button
             onClick={handleDelete}
-            className="bg-white/70 p-2 rounded-full shadow hover:scale-110 transition"
+            className="text-red-500 hover:text-red-700 transition"
             title="Delete Menu Item"
           >
-            <FiTrash2 size={18} className="text-red-500" />
+            <FiTrash2 size={20} />
           </button>
         </div>
       )}
 
-      {/* Image */}
+      {/* Item Image */}
       <img
         src={item.image}
         alt={item.name}
-        className="w-full h-[20rem] sm:h-[22rem] md:h-[24rem] object-cover transition-transform duration-500 
-                   hover:scale-105"
+        className="w-full h-full object-cover"
       />
 
-      {/* Footer (solid black background) */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black text-white p-4 font-passion">
-        <h3 className="text-lg font-bold tracking-wide">{item.name.toUpperCase()}</h3>
-        <div className="flex justify-between items-center mt-1 text-sm">
+      {/* Footer Text */}
+      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 font-passion">
+        <h3 className="text-base font-bold">{item.name.toUpperCase()}</h3>
+        <div className="flex justify-between items-center mt-2 text-sm">
           <p>
-            PRICE -{" "}
-            <span className="text-orange-500 font-bold">RS. {item.prices.medium}.00</span>
+            PRICE - <span className="text-orange-500">RS. {item.prices.medium}.00</span>
           </p>
-          <p className="uppercase">Size - M</p>
+          <p>SIZE - M</p>
         </div>
       </div>
 
       {/* Hover Overlay */}
       {hovered && (
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-sm z-10 flex flex-col justify-between p-5 text-white 
-                        animate-fadeIn">
+        <div className="absolute inset-0 bg-black bg-opacity-70 z-10 flex flex-col justify-between p-4 text-white">
           <div>
-            <h3 className="text-xl font-bold text-center mb-2">{item.name.toUpperCase()}</h3>
-            <p className="text-sm text-gray-300 text-center mb-6">{item.description}</p>
+            <h3 className="text-lg font-bold text-center mb-2">{item.name.toUpperCase()}</h3>
+            <p className="text-sm text-gray-300 text-center mb-4">{item.description}</p>
           </div>
 
-          {/* Size Options */}
-          <div className="flex justify-center gap-3 text-sm">
+          <div className="flex justify-center gap-2 text-xs">
             <button
-              className={`flex-1 px-4 py-2 rounded-xl border transition-all duration-300 
-                ${selectedSize === 'medium'
-                  ? 'bg-orange-500 border-orange-500 text-white shadow-lg'
-                  : 'bg-black/60 border-gray-600 hover:bg-gray-800 text-orange-400 font-bold'}`}
+              className={`flex-1 px-3 py-2 rounded text-center ${
+                selectedSize === 'medium'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
               onClick={() => handleSizeSelect('medium')}
             >
               MEDIUM <br />
-              <span
-                className={`${
-                  selectedSize === 'medium'
-                    ? 'text-white font-bold'
-                    : 'text-orange-500 font-bold'
-                }`}
-              >
+              <span className={selectedSize === 'medium' ? 'text-white' : 'text-orange-500'}>
                 RS. {item.prices.medium}.00
               </span>
             </button>
 
             {item.prices.large && (
               <button
-                className={`flex-1 px-4 py-2 rounded-xl border transition-all duration-300 
-                  ${selectedSize === 'large'
-                    ? 'bg-orange-500 border-orange-500 text-white shadow-lg'
-                    : 'bg-black/60 border-gray-600 hover:bg-gray-800 text-orange-400 font-bold'}`}
+                className={`flex-1 px-3 py-2 rounded text-center ${
+                  selectedSize === 'large'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-black text-white hover:bg-gray-800'
+                }`}
                 onClick={() => handleSizeSelect('large')}
               >
                 LARGE <br />
-                <span
-                  className={`${
-                    selectedSize === 'large'
-                      ? 'text-white font-bold'
-                      : 'text-orange-500 font-bold'
-                  }`}
-                >
+                <span className={selectedSize === 'large' ? 'text-white' : 'text-orange-500'}>
                   RS. {item.prices.large}.00
                 </span>
               </button>
             )}
           </div>
 
-          {/* Add to Cart */}
           <button
-            className={`mt-6 w-full py-3 text-sm font-bold rounded-xl transition-all duration-300 
-              ${selectedSize
-                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg'
-                : 'bg-gray-400 cursor-not-allowed text-gray-700'}`}
+            className={`mt-4 w-full py-2 text-sm font-bold rounded ${
+              selectedSize
+                ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
+                : 'bg-gray-400 cursor-not-allowed text-gray-600'
+            }`}
             onClick={() => handleAddToCart(selectedSize)}
             disabled={!selectedSize}
           >

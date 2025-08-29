@@ -5,7 +5,7 @@ export const StoreContext = createContext(null);
 const StoreContextProvider = (props) => {
   const [showLogin, setShowLogin] = useState(false);
   const [formType, setFormType] = useState("Login");
-  const url = process.env.REACT_APP_API_URL;
+  const url = "http://localhost:4000";
   const [token, setToken] = useState(() => localStorage.getItem("token") || "");
   const [user, setUser] = useState(() => {
     const savedName = localStorage.getItem("name");

@@ -19,7 +19,7 @@ userRouter.get(
 
 
 
-        const redirectUrl = `${process.env.FRONTEND_URL}/oauth-success?token=${encodeURIComponent(token)}&isAdmin=${encodeURIComponent(req.user.isAdmin)}&name=${encodeURIComponent(req.user.name)}&email=${encodeURIComponent(req.user.email)}&profileImage=${encodeURIComponent(req.user.profileImage)}`;
+        const redirectUrl = `http://localhost:3000/oauth-success?token=${encodeURIComponent(token)}&isAdmin=${encodeURIComponent(req.user.isAdmin)}&name=${encodeURIComponent(req.user.name)}&email=${encodeURIComponent(req.user.email)}&profileImage=${encodeURIComponent(req.user.profileImage)}`;
         res.redirect(redirectUrl);
 
     }
