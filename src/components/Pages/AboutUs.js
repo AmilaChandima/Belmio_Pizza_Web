@@ -264,7 +264,7 @@ const AboutUs = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Amila Chandima"
+                  placeholder="Enter your name"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
@@ -278,7 +278,7 @@ const AboutUs = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="amilachandima@gmail.com"
+                  placeholder="eg:user@gmail.com"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
@@ -292,7 +292,7 @@ const AboutUs = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="077 123 4567"
+                  placeholder="eg:077 123 4567"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
@@ -306,7 +306,7 @@ const AboutUs = () => {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Colombo, Sri Lanka"
+                  placeholder="eg:Colombo, Sri Lanka"
                   required
                   className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
