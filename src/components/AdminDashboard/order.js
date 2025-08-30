@@ -2,13 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { StoreContext } from "../../context/StoreContext";
 import { format } from "date-fns";
-import {
-  FaCreditCard,
-  FaMoneyBill,
-  FaClock,
-  FaSortAlphaDown,
-  FaSortNumericDown,
-} from "react-icons/fa";
+import { FaCreditCard, FaMoneyBill, FaClock, FaSortAlphaDown, FaSortNumericDown } from "react-icons/fa";
 
 const Orders = () => {
   const { url } = useContext(StoreContext);
@@ -32,16 +26,10 @@ const Orders = () => {
     }
   };
 
-  const handleUpdateDelivery = async (orderId, status) => {
+  const handleDelivered = async (orderId) => {
     try {
-      console.log(status, orderId);
-      await axios.patch(`${url}/api/orders/${orderId}/status`, {
-        status,   // 👈 not orderStatus
-      });
-      
-      
-      
-      fetchOrders(); // refresh
+      await axios.patch(`${url}/api/orders/${orderId}/delivered`);
+      fetchOrders(); // refresh orders
     } catch (err) {
       console.error("Failed to update delivery status:", err);
     }
@@ -77,45 +65,33 @@ const Orders = () => {
         {/* Filters */}
         <div className="flex flex-wrap gap-4 mb-6 justify-center">
           <button
-            className={`px-4 py-2 rounded ${
-              filter === "all"
-                ? "bg-orange-600 text-white"
-                : "bg-white border"
-            }`}
+            className={`px-4 py-2 rounded ${filter === "all" ? "bg-orange-600 text-white" : "bg-white border"}`}
             onClick={() => setFilter("all")}
           >
             All
           </button>
           <button
-            className={`px-4 py-2 rounded ${
-              filter === "card"
-                ? "bg-green-600 text-white"
-                : "bg-white border"
-            }`}
+            className={`px-4 py-2 rounded ${filter === "card" ? "bg-green-600 text-white" : "bg-white border"}`}
             onClick={() => setFilter("card")}
           >
             Card Payment
           </button>
           <button
-            className={`px-4 py-2 rounded ${
-              filter === "cod"
-                ? "bg-yellow-600 text-white"
-                : "bg-white border"
-            }`}
+            className={`px-4 py-2 rounded ${filter === "cod" ? "bg-yellow-600 text-white" : "bg-white border"}`}
             onClick={() => setFilter("cod")}
           >
             Cash on Delivery
           </button>
 
           <button
-            className="px-4 py-2 rounded bg-white border flex items-center gap-2"
+            className={`px-4 py-2 rounded bg-white border flex items-center gap-2`}
             onClick={() => setSortBy("date")}
           >
             <FaSortNumericDown /> Sort by Date
           </button>
 
           <button
-            className="px-4 py-2 rounded bg-white border flex items-center gap-2"
+            className={`px-4 py-2 rounded bg-white border flex items-center gap-2`}
             onClick={() => setSortBy("email")}
           >
             <FaSortAlphaDown /> Sort by Email
@@ -124,14 +100,12 @@ const Orders = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedOrders.length === 0 && (
-            <p className="text-center text-gray-500 col-span-full">
-              No orders found.
-            </p>
+            <p className="text-center text-gray-500 col-span-full">No orders found.</p>
           )}
           {sortedOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 ease-in-out"
+              className={`bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 ease-in-out`}
             >
               <div
                 className={`p-4 border-l-4 ${
@@ -142,9 +116,7 @@ const Orders = () => {
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <p className="font-bold text-gray-800 text-lg">
-                      {order.email}
-                    </p>
+                    <p className="font-bold text-gray-800 text-lg">{order.email}</p>
                     <p className="text-sm text-gray-500">{order.phone}</p>
                   </div>
                   <span
@@ -178,8 +150,7 @@ const Orders = () => {
                         className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded-md"
                       >
                         <span className="text-gray-700">
-                          {item.name}{" "}
-                          {item.size ? `(${item.size})` : ""} × {item.quantity}
+                          {item.name} {item.size ? `(${item.size})` : ""} x {item.quantity}
                         </span>
                         <span className="font-medium text-gray-800">
                           RS.{item.price.toFixed(2)}
@@ -205,34 +176,17 @@ const Orders = () => {
                     <p className="text-lg font-bold text-gray-900">
                       Total: RS.{order.totalPrice.toFixed(2)}
                     </p>
-                    {order.orderStatus === "processing" && (
-                      <>
-                        <button
-                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          onClick={() =>
-                            handleUpdateDelivery(order._id, "delivered")
-                          }
-                        >
-                          Mark Delivered
-                        </button>
-                        <button
-                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
-                          onClick={() =>
-                            handleUpdateDelivery(order._id, "canceled")
-                          }
-                        >
-                          Mark Canceled
-                        </button>
-                      </>
+                    {order.deliveryStatus !== "delivered" && (
+                      <button
+                        className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        onClick={() => handleDelivered(order._id)}
+                      >
+                        Mark Delivered
+                      </button>
                     )}
-                    {order.orderStatus === "delivered" && (
+                    {order.deliveryStatus === "delivered" && (
                       <span className="px-3 py-1 bg-green-600 text-white text-sm rounded">
                         Delivered
-                      </span>
-                    )}
-                    {order.orderStatus === "canceled" && (
-                      <span className="px-3 py-1 bg-red-600 text-white text-sm rounded">
-                        Canceled
                       </span>
                     )}
                   </div>

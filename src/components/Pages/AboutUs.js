@@ -63,35 +63,102 @@ const AboutUs = () => {
 
   // Handle form submit
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:4000/api/subscriptions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      toast.success("Thank you for subscribing!", {
-        position: "top-right",
+    e.preventDefault();
+    
+    // Phone number validation
+    const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error('Please enter a valid phone number (e.g., 0712345678 or +94712345678)', {
+        position: "top-center",
         autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: {
+          background: '#FF5252',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }
       });
-      setFormData({ name: "", email: "", phone: "", address: "" });
-    } else {
-      toast.error(data.message || "Something went wrong", {
-       position: "top-right",
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:4000/api/subscriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("Thank you for subscribing!", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          style: {
+            background: '#4CAF50',
+            color: '#fff',
+            fontWeight: 'bold',
+            borderRadius: '8px',
+            padding: '12px 20px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }
+        });
+        setFormData({ name: "", email: "", phone: "", address: "" });
+      } else {
+        toast.error(data.message || "Something went wrong", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          style: {
+            background: '#FF5252',
+            color: '#fff',
+            fontWeight: 'bold',
+            borderRadius: '8px',
+            padding: '12px 20px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }
+        });
+      }
+    } catch (error) {
+      toast.error("Error submitting form", {
+        position: "top-center",
         autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        style: {
+          background: '#FF5252',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderRadius: '8px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }
       });
     }
-  } catch (error) {
-    toast.error("Error submitting form", {
-      position: toast.POSITION.TOP_RIGHT,
-      autoClose: 3000,
-    });
-  }
-};
+  };
 
   return (
     <div className="bg-white text-gray-800">
