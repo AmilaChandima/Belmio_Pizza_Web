@@ -14,6 +14,23 @@ const loginUser = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "User doesn't exist" });
     };
 
+    // Special handling for admin user
+    if (email === 'admin@gmail.com') {
+      if (password !== 'admin@123') {
+        return res.status(400).json({ success: false, message: "Invalid admin credentials" });
+      }
+      // If admin credentials are correct, return admin user
+      const token = createToken('admin');
+      return res.status(200).json({ 
+        success: true, 
+        token, 
+        name: 'Admin',
+        email: 'admin@gmail.com',
+        isAdmin: true 
+      });
+    }
+
+    // Regular user login
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -22,7 +39,13 @@ const loginUser = async (req, res, next) => {
 
     const token = createToken(user._id);
 
-    res.status(200).json({ success: true, token, isAdmin: user.isAdmin });
+    res.status(200).json({ 
+      success: true, 
+      token, 
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin 
+    });
 
   } catch (error) {
     console.error(error);  
@@ -75,39 +98,5 @@ const registerUser = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Error registering user", error: error.message });
   }
 };
-
-// Create Admin User
-const createAdminUser = async () => {
-  try {
-    // Check if admin already exists
-    const adminExists = await userModel.findOne({ email: 'admin@gmail.com' });
-    if (adminExists) {
-      console.log('Admin user already exists');
-      return;
-    }
-
-    // Create admin user
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('admin@123', salt);
-
-    // Update admin if exists, otherwise create new admin
-    const adminUser = await userModel.findOneAndUpdate(
-      { email: 'admin@gmail.com' },
-      {
-        name: 'Admin',
-        email: 'admin@gmail.com',
-        password: hashedPassword,
-        isAdmin: true
-      },
-      { upsert: true, new: true }
-    );
-    console.log('Admin user created successfully');
-  } catch (error) {
-    console.error('Error creating admin user:', error);
-  }
-};
-
-// Create admin user on server start
-createAdminUser();
 
 export { loginUser, registerUser };

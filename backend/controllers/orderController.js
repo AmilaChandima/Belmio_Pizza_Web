@@ -71,30 +71,3 @@ export const markOrderDelivered = async (req, res) => {
     res.status(500).json({ error: "Failed to update delivery status" });
   }
 };
-
-
-// Update order status
-export const updateOrderStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    if (!["processing", "delivered", "canceled"].includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
-    }
-
-    const order = await Order.findByIdAndUpdate(
-      id,
-      { orderStatus: status },
-      { new: true }
-    );
-
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    res.json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};

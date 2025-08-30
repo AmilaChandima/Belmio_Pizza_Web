@@ -219,13 +219,21 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                       className="flex items-center space-x-2 focus:outline-none"
                       onMouseEnter={() => setIsProfileOpen(true)}
                     >
-                      <div className="relative">
-                        <img
-                          src={profileImage || "default-profile.png"}
-                          alt="Profile"
-                          className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                      {profileImage && profileImage !== "default-profile.png" ? (
+                        <img 
+                          src={profileImage} 
+                          alt="Profile" 
+                          className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                          onClick={toggleProfile}
                         />
-                      </div>
+                      ) : (
+                        <div 
+                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center cursor-pointer"
+                          onClick={toggleProfile}
+                        >
+                          {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                      )}
                     </button>
 
                     {/* Profile Dropdown */}
@@ -299,16 +307,19 @@ const Navbar = ({ setShowLogin, setFormType }) => {
                   {isAdmin && (
                     <button onClick={() => { navigate('/admin/dashboard'); setIsMenuOpen(false); }} className="text-white border px-4 py-2 rounded hover:bg-white hover:text-orange-600">Dashboard</button>
                   )}
-                  <img
-                    src={user?.profileImage || "default-profile.png"}
-                    alt="Profile"
-                    loading="lazy"
-                    className="w-10 h-10 rounded-full border-2 border-white object-cover"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "default-profile.png";
-                    }}
-                  />
+                  {profileImage && profileImage !== "default-profile.png" ? (
+                    <img 
+                      src={profileImage} 
+                      alt="Profile" 
+                      className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                    />
+                  ) : (
+                    <div 
+                      className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center"
+                    >
+                      {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
                   <button onClick={() => { logOut(); setIsMenuOpen(false); }} className="text-white border px-4 py-2 rounded hover:bg-white hover:text-orange-600">LOG OUT</button>
                 </div>
               )}

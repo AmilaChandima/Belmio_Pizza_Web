@@ -16,13 +16,6 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     paymentMethod: { type: String, enum: ["card", "cod"], required: true },
     paymentStatus: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
-
-    // 👇 new field for order tracking
-    orderStatus: { 
-      type: String, 
-      enum: ["processing", "delivered", "cancelled"], 
-      default: "processing" 
-    },
   },
   { timestamps: true }
 );
