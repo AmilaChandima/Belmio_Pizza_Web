@@ -24,7 +24,6 @@ const AddItem = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "medium" || name === "large") {
       setFormData((prev) => ({
         ...prev,
@@ -53,16 +52,35 @@ const AddItem = () => {
       return null;
     }
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) setImage(file);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.name || !formData.description || !formData.prices.medium ) {
-      toast.error("Please fill all the fields.");
+    if (!formData.name || !formData.description || !formData.prices.medium) {
+      toast.error("Please fill all the required fields.");
+      setLoading(false);
+      return;
+    }
+
+    // Convert to numbers
+    const mediumPrice = parseFloat(formData.prices.medium);
+    const largePrice = parseFloat(formData.prices.large);
+
+    // ✅ Validation: positive numbers only
+    if (isNaN(mediumPrice) || mediumPrice <= 0) {
+      toast.error("Medium price must be a positive number!");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.prices.large && (isNaN(largePrice) || largePrice <= 0)) {
+      toast.error("Large price must be a positive number!");
       setLoading(false);
       return;
     }
@@ -80,8 +98,8 @@ const AddItem = () => {
       name: formData.name,
       description: formData.description,
       prices: {
-        medium: parseFloat(formData.prices.medium),
-        large: parseFloat(formData.prices.large),
+        medium: mediumPrice,
+        large: formData.prices.large ? largePrice : null,
       },
       image: uploadedImageUrl,
     };
@@ -95,13 +113,9 @@ const AddItem = () => {
           name: "",
           category: "Pizza",
           description: "",
-          prices: {
-            medium: "",
-            large: "",
-          },
+          prices: { medium: "", large: "" },
         });
         setImage(null);
-
       }
     } catch (error) {
       console.error("Menu Item creation failed:", error);
@@ -113,14 +127,13 @@ const AddItem = () => {
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg p-8 mt-28 rounded-2xl">
-
       <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">
-
-        <span className="text-black">ADD MENU <span className="text-orange-500">ITEM</span></span>
+        <span className="text-black">
+          ADD MENU <span className="text-orange-500">ITEM</span>
+        </span>
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-
         {/* Category */}
         <div>
           <label className="block mb-1 font-medium">Category</label>
@@ -168,7 +181,6 @@ const AddItem = () => {
             onChange={handleImageChange}
             className="w-full"
             required
-
           />
         </div>
 
@@ -197,29 +209,34 @@ const AddItem = () => {
         {/* Prices */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 font-medium">Medium Size Price (Rs)</label>
+            <label className="block mb-1 font-medium">
+              Medium Size Price (Rs)
+            </label>
             <input
               type="number"
               name="medium"
               value={formData.prices.medium}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="e.g., Rs. 1499.00"
-              step="1000"
+              placeholder="e.g., 1499.00"
+              step="0.01"
+              min="0.01" // ✅ Prevent negatives
               required
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium">Large Size Price (Rs)</label>
+            <label className="block mb-1 font-medium">
+              Large Size Price (Rs)
+            </label>
             <input
               type="number"
               name="large"
               value={formData.prices.large}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="e.g., RS. 2999.00"
-              step="1000"
-              
+              placeholder="e.g., 2999.00"
+              step="0.01"
+              min="0.01" // ✅ Prevent negatives
             />
           </div>
         </div>
@@ -236,7 +253,6 @@ const AddItem = () => {
             "Add Item"
           )}
         </button>
-
       </form>
     </div>
   );

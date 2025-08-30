@@ -23,12 +23,10 @@ const MenuItem = ({ item, onDelete }) => {
     checkAdmin();
   }, []);
 
-  // Handle size selection
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
   };
 
-  // Handle add to cart
   const handleAddToCart = (size) => {
     try {
       if (!token) {
@@ -40,8 +38,6 @@ const MenuItem = ({ item, onDelete }) => {
         toast.warning('Please select a size first');
         return;
       }
-      // Show toast first to ensure it appears
-     // console.log(`${item.name} (${size}) added to cart!`);
       addToCart(item, size);
       setSelectedSize(null);
     } catch (error) {
@@ -66,62 +62,69 @@ const MenuItem = ({ item, onDelete }) => {
 
   return (
     <div
-      className="menu-item relative border rounded shadow-md overflow-hidden w-full h-[20rem] sm:h-[22rem] md:h-[24rem] bg-white"
+      className="menu-item relative border rounded-2xl shadow-lg overflow-hidden w-full h-[22rem] md:h-[25rem] bg-white group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Admin Buttons */}
       {isAdmin && (
-        <div className="absolute top-2 right-2 flex gap-3 z-20">
+        <div className="absolute top-3 right-3 flex gap-3 z-20">
           <Link
             to={`/edit/${item._id}`}
-            className="text-blue-500 hover:text-yellow-500 transition"
+            className="bg-white/80 backdrop-blur-md rounded-full p-2 text-blue-500 hover:text-yellow-500 hover:scale-110 transition"
             title="Edit Menu Item"
           >
-            <FiEdit2 size={20} />
+            <FiEdit2 size={18} />
           </Link>
           <button
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-700 transition"
+            className="bg-white/80 backdrop-blur-md rounded-full p-2 text-red-500 hover:text-red-700 hover:scale-110 transition"
             title="Delete Menu Item"
           >
-            <FiTrash2 size={20} />
+            <FiTrash2 size={18} />
           </button>
         </div>
       )}
 
       {/* Item Image */}
-      <img
-        src={item.image}
-        alt={item.name}
-        className="w-full h-full object-cover"
-      />
+      <div className="w-full h-full overflow-hidden">
+        <img
+          src={item.image}
+          alt={item.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+      </div>
 
       {/* Footer Text */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 font-passion">
-        <h3 className="text-base font-bold">{item.name.toUpperCase()}</h3>
-        <div className="flex justify-between items-center mt-2 text-sm">
+      <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md text-white p-3 font-passion">
+        <h3 className="text-lg font-bold tracking-wide">{item.name.toUpperCase()}</h3>
+        <div className="flex justify-between items-center mt-1 text-sm">
           <p>
             PRICE - <span className="text-orange-500">RS. {item.prices.medium}.00</span>
           </p>
-          <p>SIZE - M</p>
+          <p className="uppercase">Size - M</p>
         </div>
       </div>
 
       {/* Hover Overlay */}
       {hovered && (
-        <div className="absolute inset-0 bg-black bg-opacity-70 z-10 flex flex-col justify-between p-4 text-white">
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-10 flex flex-col justify-between p-4 text-white animate-fadeIn">
           <div>
-            <h3 className="text-lg font-bold text-center mb-2">{item.name.toUpperCase()}</h3>
-            <p className="text-sm text-gray-300 text-center mb-4">{item.description}</p>
+            <h3 className="text-xl font-bold text-center mb-2 tracking-wide">
+              {item.name.toUpperCase()}
+            </h3>
+            <p className="text-sm text-gray-300 text-center leading-relaxed mb-4">
+              {item.description}
+            </p>
           </div>
 
+          {/* Size Buttons */}
           <div className="flex justify-center gap-2 text-xs">
             <button
-              className={`flex-1 px-3 py-2 rounded text-center ${
+              className={`flex-1 px-3 py-2 rounded-lg shadow-md transition transform hover:scale-105 ${
                 selectedSize === 'medium'
                   ? 'bg-orange-500 text-white'
-                  : 'bg-black text-white hover:bg-gray-800'
+                  : 'bg-white/10 text-white hover:bg-white/20'
               }`}
               onClick={() => handleSizeSelect('medium')}
             >
@@ -133,10 +136,10 @@ const MenuItem = ({ item, onDelete }) => {
 
             {item.prices.large && (
               <button
-                className={`flex-1 px-3 py-2 rounded text-center ${
+                className={`flex-1 px-3 py-2 rounded-lg shadow-md transition transform hover:scale-105 ${
                   selectedSize === 'large'
                     ? 'bg-orange-500 text-white'
-                    : 'bg-black text-white hover:bg-gray-800'
+                    : 'bg-white/10 text-white hover:bg-white/20'
                 }`}
                 onClick={() => handleSizeSelect('large')}
               >
@@ -148,11 +151,12 @@ const MenuItem = ({ item, onDelete }) => {
             )}
           </div>
 
+          {/* Add to Cart Button */}
           <button
-            className={`mt-4 w-full py-2 text-sm font-bold rounded ${
+            className={`mt-4 w-full py-2 text-sm font-bold rounded-lg shadow-md transition transform hover:scale-[1.02] ${
               selectedSize
                 ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
-                : 'bg-gray-400 cursor-not-allowed text-gray-600'
+                : 'bg-gray-400 cursor-not-allowed text-gray-200'
             }`}
             onClick={() => handleAddToCart(selectedSize)}
             disabled={!selectedSize}

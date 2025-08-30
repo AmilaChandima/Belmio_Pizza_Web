@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { menuServices } from "../../Services/MenuServices";
 
@@ -10,55 +9,43 @@ const UPLOAD_PRESET = "KickOff";
 
 const EditItem = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // Get item ID from URL params
+  const { id } = useParams();
   const [formData, setFormData] = useState({
+    category: "",
     name: "",
-    category: "Pizza",
     description: "",
-    prices: {
-      medium: "",
-      large: "",
-    },
+    prices: { medium: "", large: "" },
+    image: "",
   });
-  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch the existing item data
+  // Fetch current item data
   useEffect(() => {
-    const fetchItemData = async () => {
+    const fetchItem = async () => {
       try {
-        setLoading(true)
-        const item = await menuServices.getItemById(id);
-        if (item) {
-          setFormData({
-            name: item.name,
-            category: item.category,
-            description: item.description,
-            image: item.image || "",
-            prices: {
-              medium: item.prices.medium.toString(),
-              large: item.prices.large.toString(),
-            }
-
-          });
-        }
-        else {
-          toast.error("Post not found!");
-          navigate("/");
-        }
-      } catch (error) {
-        toast.error("Failed to load menu item.");
-        console.error(error);
-      } finally {
-        setLoading(false);
+        const res = await menuServices.getItemById(id);
+        setFormData({
+          category: res.data.category,
+          name: res.data.name,
+          description: res.data.description,
+          prices: {
+            medium: res.data.prices.medium,
+            large: res.data.prices.large,
+          },
+          image: res.data.image,
+        });
+      } catch (err) {
+        toast.error("Failed to fetch menu item.");
+        console.error(err);
       }
     };
-    fetchItemData();
-  }, [id, navigate]);
+    fetchItem();
+  }, [id]);
 
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "medium" || name === "large") {
       setFormData((prev) => ({
         ...prev,
@@ -69,43 +56,68 @@ const EditItem = () => {
     }
   };
 
-  const uploadImageToCloudinary = async () => {
-    if (!image) return formData.image;
+  // Handle image file selection
+  const handleFileChange = (e) => {
+    if (e.target.files[0]) setImageFile(e.target.files[0]);
+  };
 
-    const imageFormData = new FormData();
-    imageFormData.append("file", image);
-    imageFormData.append("upload_preset", UPLOAD_PRESET);
+  // Upload image to Cloudinary
+  const uploadImageToCloudinary = async () => {
+    if (!imageFile) return null;
+
+    const form = new FormData();
+    form.append("file", imageFile);
+    form.append("upload_preset", UPLOAD_PRESET);
 
     try {
-      const response = await axios.post(
+      const res = await fetch(
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        imageFormData
+        {
+          method: "POST",
+          body: form,
+        }
       );
-      return response.data.secure_url;
+      const data = await res.json();
+      return data.secure_url;
     } catch (err) {
-      toast.error("Image upload failed.");
+      console.error("Image upload error:", err);
       return null;
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setImage(file);
-  };
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.name || !formData.description || !formData.prices.medium || !formData.prices.large) {
+    const { name, description, prices } = formData;
+    const { medium, large } = prices;
+
+    // Validate required fields
+    if (!name || !description || !medium || !large) {
       toast.error("Please fill all the fields.");
       setLoading(false);
       return;
     }
 
-    const uploadedImageUrl = await uploadImageToCloudinary();
+    const mediumPrice = parseFloat(medium);
+    const largePrice = parseFloat(large);
 
-    if (!uploadedImageUrl && !image) {
+    // Validate positive numbers
+    if (isNaN(mediumPrice) || mediumPrice <= 0) {
+      toast.error("Medium price must be a positive number!");
+      setLoading(false);
+      return;
+    }
+    if (isNaN(largePrice) || largePrice <= 0) {
+      toast.error("Large price must be a positive number!");
+      setLoading(false);
+      return;
+    }
+
+    // Upload image if changed
+    const uploadedImageUrl = await uploadImageToCloudinary();
+    if (!uploadedImageUrl && !formData.image) {
       toast.error("Image upload failed.");
       setLoading(false);
       return;
@@ -115,19 +127,18 @@ const EditItem = () => {
       category: formData.category,
       name: formData.name,
       description: formData.description,
-      prices: {
-        medium: parseFloat(formData.prices.medium),
-        large: parseFloat(formData.prices.large),
-      },
-      image: uploadedImageUrl || image, // If image isn't changed, keep the old one
+      prices: { medium: mediumPrice, large: largePrice },
+      image: uploadedImageUrl || formData.image,
     };
 
     try {
       await menuServices.updateItem(id, updatedItem);
-      toast.success("Item updated successfully!");
+      toast.success("Menu item updated successfully!");
       navigate("/menu");
     } catch (err) {
-      toast.error("Failed to update item.");
+      toast.error(
+        err.response?.data?.message || "Failed to update menu item."
+      );
       console.error(err);
     } finally {
       setLoading(false);
@@ -135,144 +146,82 @@ const EditItem = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg p-8 mt-28 rounded-2xl">
-      <h2 className="text-4xl font-bold text-gray-800 mb-6 text-center">
-        <span className="text-black">EDIT MENU <span className="text-orange-500">ITEM</span></span>
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Category */}
-        <div>
-          <label className="block mb-1 font-medium">Category</label>
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-xl"
-            required
-          >
-            <option value="">Select Category</option>
-            <option value="pizza">Pizza</option>
-            <option value="calzone">Calzone</option>
-            <option value="pasta">Pasta</option>
-            <option value="mains">Mains</option>
-            <option value="sides">Sides</option>
-            <option value="soup">Soup</option>
-            <option value="salad">Salad</option>
-            <option value="risotto">Risotto</option>
-            <option value="desserts">Desserts</option>
-            <option value="beverages">Beverages</option>
-          </select>
-        </div>
-
-        {/* Item Name */}
-        <div>
-          <label className="block mb-1 font-medium">Item Name</label>
+    <div className="edit-item-container">
+      <h2>Edit Menu Item</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name:
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-xl"
-            placeholder="e.g., Spaghetti Carbonara"
             required
           />
-        </div>
+        </label>
 
-        {/* Upload Image */}
-        <div>
-          <label className="block mb-1 font-medium">Upload Image</label>
-
-          {/* Hide the actual file input */}
+        <label>
+          Category:
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-            id="file-upload"
+            type="text"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            required
           />
+        </label>
 
-          {/* Custom label styled as a button */}
-          <label
-            htmlFor="file-upload"
-            className="inline-block px-4 py-2 bg-gray-200 rounded-xl cursor-pointer hover:bg-gray-300"
-          >
-            Change Image
-          </label>
-
-          {/* Show file name if selected */}
-          {image && (
-            <p className="mt-2 text-sm text-gray-600">{image.name}</p>
-          )}
-        </div>
-
-
-
-
-        {image ? (
-          <img src={URL.createObjectURL(image)} alt="New Preview" className="w-72 h-72 mt-2 rounded-lg shadow-md" />
-        ) : (
-          formData.image && (
-            <img src={formData.image} alt="Current Cover" className="w-72 h-72 mt-2 rounded-lg shadow-md" />
-          )
-        )}
-
-
-        {/* Description */}
-        <div>
-          <label className="block mb-1 font-medium">Description</label>
+        <label>
+          Description:
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            rows="3"
-            className="w-full p-2 border border-gray-300 rounded-xl"
-            placeholder="Short description of the item"
             required
           />
-        </div>
+        </label>
 
-        {/* Prices */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1 font-medium">Medium Size Price (Rs)</label>
-            <input
-              type="number"
-              name="medium"
-              value={formData.prices.medium}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="e.g., Rs. 1499.00"
-              step="0.01"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Large Size Price (Rs)</label>
-            <input
-              type="number"
-              name="large"
-              value={formData.prices.large}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-xl"
-              placeholder="e.g., RS. 2999.00"
-              step="0.01"
-              required
-            />
-          </div>
-        </div>
+        <label>
+          Medium Price:
+          <input
+            type="number"
+            name="medium"
+            value={formData.prices.medium}
+            onChange={handleChange}
+            min="0.01"
+            step="0.01"
+            required
+          />
+        </label>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-red-700 transition duration-200 flex justify-center items-center"
-        >
-          {loading ? (
-            <span className="animate-spin inline-block w-5 h-5 border-[3px] border-white border-t-transparent rounded-full"></span>
-          ) : (
-            "Update Item"
-          )}
+        <label>
+          Large Price:
+          <input
+            type="number"
+            name="large"
+            value={formData.prices.large}
+            onChange={handleChange}
+            min="0.01"
+            step="0.01"
+            required
+          />
+        </label>
+
+        <label>
+          Image:
+          <input type="file" onChange={handleFileChange} />
+        </label>
+
+        {formData.image && !imageFile && (
+          <img
+            src={formData.image}
+            alt="Current"
+            style={{ width: "150px", marginTop: "10px" }}
+          />
+        )}
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Updating..." : "Update Item"}
         </button>
       </form>
     </div>
