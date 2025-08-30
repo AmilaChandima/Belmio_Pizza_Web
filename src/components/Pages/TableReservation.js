@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import FloorPlanImage from "../../assests/FD.png";
+import FloorPlanImage from "../../assests/TableReserv.png"
 import Truck from "../../assests/FT.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -153,7 +153,7 @@ const TableReservation = () => {
         <img
           src={FloorPlanImage}
           alt="Floor Plan"
-          className="w-full h-auto border-4 border-orange-500 rounded-lg shadow-lg"
+          className="w-full h-auto border-orange-500 rounded-lg shadow-lg"
         />
       </div>
 
